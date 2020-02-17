@@ -1,0 +1,11 @@
+yq
+black
+isort
+mypy
+pyflakes
+pytest
+pytest-cov
+coverage
+cookiecutter
+httpie
+pyinstaller

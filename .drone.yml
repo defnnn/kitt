@@ -1,0 +1,156 @@
+---
+kind: pipeline
+type: docker
+name: fmt
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: everything
+  image: letfn/drone
+  settings:
+    task: fmt
+
+---
+kind: pipeline
+type: docker
+name: lint
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: everything
+  image: letfn/drone
+  settings:
+    task: lint
+
+---
+kind: pipeline
+type: docker
+name: fmt-python
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: python
+  image: letfn/python
+  commands:
+  - . /app/venv/bin/activate && isort -rc src
+  - . /app/venv/bin/activate && black src
+
+---
+kind: pipeline
+type: docker
+name: lint-python
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: everything
+  image: letfn/python
+  commands:
+  - . /app/venv/bin/activate && pyflakes src
+  - . /app/venv/bin/activate && mypy src
+
+---
+kind: pipeline
+type: docker
+name: test
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: everything
+  image: letfn/python
+  commands:
+  - . /app/venv/bin/activate && pytest -v src
+
+depends_on:
+- fmt
+- fmt-python
+- lint
+- lint-python
+
+---
+kind: pipeline
+type: docker
+name: requirements
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: everything
+  image: letfn/python
+  commands:
+  - . /app/venv/bin/activate
+  - pip-compile /drone/src/requirements.in -o /tmp/requirements.in.txt
+  - if test -w . ; then cp /tmp/requirements.in.txt requirements.in.txt; else diff requirements.in.txt /tmp/requirements.in.txt || true; fi
+  - pip-compile /drone/src/requirements.in.txt requirements.dev -o /tmp/requirements.txt
+  - if test -w . ; then cp /tmp/requirements.txt requirements.txt; else diff requirements.txt /tmp/requirements.txt || true;  fi
+
+trigger:
+  instance:
+    exclude:
+    - cloud.drone.io
+
+---
+kind: pipeline
+type: docker
+name: build
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: kaniko
+  image: letfn/drone-kaniko
+  settings:
+    args: --destination=letfn/python-cli
+    cache: true
+    cache_repo: defn/cache
+    password:
+      from_secret: docker_password
+    repo: letfn/python-cli
+    skip_tls_verify: true
+    tag: latest
+    username:
+      from_secret: docker_username
+
+depends_on:
+- test
+
+---
+kind: pipeline
+type: docker
+name: docs
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: local
+  image: letfn/drone-hugo
+
+- name: gh-pages
+  image: letfn/drone-hugo
+  settings:
+    github_pages: true
+
+depends_on:
+- build
+
+...
