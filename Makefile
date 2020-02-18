@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+.PHONY: docs
+
 menu:
 	@perl -ne 'printf("%10s: %s\n","$$1","$$2") if m{^([\w+-]+):[^#]+#\s(.+)$$}' Makefile | sort -b
 
