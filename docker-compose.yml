@@ -33,6 +33,7 @@ services:
     ports:
       - 80:80
       - 443:443
+      - 9630:9630
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-api.rule=Host(`traefik.${DOMAIN}`) && PathPrefix(`/api`)"
