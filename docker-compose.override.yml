@@ -8,6 +8,10 @@ services:
       - "traefik.http.routers.traefik-api.service=api@internal"
       - "traefik.http.routers.traefik-dash.rule=Host(`traefik.whoa.bot`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
+  portainer:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.whoa.bot`)"
 
 networks:
   default:
