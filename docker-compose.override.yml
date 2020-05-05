@@ -1,0 +1,15 @@
+version: '3.7'
+
+services:
+  pause:
+    image: gcr.io/google_containers/pause-amd64:3.2
+  app:
+    env_file: ./.env
+    depends_on:
+      - pause
+    network_mode: service:pause
+
+networks:
+  default:
+    external:
+      name: kitt
