@@ -21,6 +21,12 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
+  home:
+    image: "defn/home"
+    entrypoint: [ "/service", "sshd" ]
+    depends_on:
+      - pause
+    network_mode: service:pause
   pause:
     ports:
       - 80:80
