@@ -9,11 +9,14 @@ services:
       - --providers.docker.exposedbydefault=false
       - --log.level=DEBUG
       - --accesslog=true
-      - --entryPoints.web.address=:80
-      - --entryPoints.web.proxyProtocol.insecure
-      - --entryPoints.websecure.address=:443
-      - --entryPoints.websecure.proxyProtocol.insecure
+      - --entrypoints.http.address=:80
+      - --entrypoints.http.proxyprotocol.insecure
+      - --entrypoints.http.http.redirections.entryPoint.to=https
+      - --entrypoints.http.http.redirections.entryPoint.scheme=https
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
+      - --entrypoints.https.address=:443
+      - --entrypoints.https.proxyprotocol.insecure
+      - --entrypoints.https.http.tls.certResolver=le
       - --providers.file.directory=/etc/traefik/conf.d
       - --providers.file.watch=true
       - --api.dashboard
@@ -21,29 +24,14 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
-  home:
-    image: "defn/home"
-    entrypoint: [ "sleep", "86400000" ]
-    depends_on:
-      - pause
-    network_mode: service:pause
   pause:
     ports:
       - 80:80
       - 443:443
     labels:
       - "traefik.enable=true"
-      - "traefik.http.middlewares.https-redirect.redirectScheme.scheme=https"
-      - "traefik.http.routers.http-catchall.rule=hostregexp(`{host:.+}`)"
-      - "traefik.http.routers.http-catchall.entrypoints=web"
-      - "traefik.http.routers.http-catchall.middlewares=https-redirect@docker"
-      - "traefik.http.routers.traefik-api.tls=true"
-      - "traefik.http.routers.traefik-api.tls.certresolver=le"
-      - "traefik.http.routers.traefik-api.entrypoints=websecure"
       - "traefik.http.routers.traefik-api.rule=Host(`traefik.${DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
-      - "traefik.http.routers.traefik-dash.tls=true"
-      - "traefik.http.routers.traefik-dash.tls.certresolver=le"
-      - "traefik.http.routers.traefik-dash.entrypoints=websecure"
       - "traefik.http.routers.traefik-dash.rule=Host(`traefik.${DOMAIN}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
+
