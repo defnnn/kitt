@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  app:
+  traefik:
     image: "traefik:v2.2.1"
     command:
       - --providers.docker
@@ -29,15 +29,7 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
-  pause:
     ports:
       - 80:80
       - 443:443
       - 9630:9630
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik-api.rule=Host(`traefik.${DOMAIN}`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.traefik-api.service=api@internal"
-      - "traefik.http.routers.traefik-dash.rule=Host(`traefik.${DOMAIN}`)"
-      - "traefik.http.routers.traefik-dash.service=dashboard@internal"
-

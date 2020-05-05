@@ -1,13 +1,13 @@
 version: '3.7'
 
 services:
-  pause:
-    image: gcr.io/google_containers/pause-amd64:3.2
-  app:
-    env_file: ./.env
-    depends_on:
-      - pause
-    network_mode: service:pause
+  traefik:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-api.rule=Host(`traefik.whoa.bot`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik-api.service=api@internal"
+      - "traefik.http.routers.traefik-dash.rule=Host(`traefik.whoa.bot`)"
+      - "traefik.http.routers.traefik-dash.service=dashboard@internal"
 
 networks:
   default:
