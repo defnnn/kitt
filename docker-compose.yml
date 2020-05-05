@@ -7,6 +7,7 @@ services:
       - --providers.docker
       - --providers.docker.usebindportip
       - --providers.docker.exposedbydefault=false
+      - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
       - --entrypoints.http.address=:80
