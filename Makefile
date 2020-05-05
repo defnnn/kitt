@@ -1,5 +1,7 @@
 SHELL := /bin/bash
 
+KITT_IP := 169.254.32.1
+
 .PHONY: docs
 
 menu:
@@ -39,3 +41,8 @@ build: # Build container
 
 watch: # Watch for changes
 	@trap 'exit' INT; while true; do fswatch -0 src content | while read -d "" event; do case "$$event" in *.py) figlet woke; make lint test; break; ;; *.md) figlet docs; make docs; ;; esac; done; sleep 1; done
+
+up: # Bring up networking
+	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
+		bash -c "ip link add dummy0 type dummy; ip addr add $(KITT_IP)/32 dev dummy0; ip link set dev dummy0 up"
+	for ip in $(KITT_IP); do sudo ifconfig lo0 alias "$$ip" netmask 255.255.255.255; done
