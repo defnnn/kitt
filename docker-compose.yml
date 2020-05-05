@@ -23,7 +23,7 @@ services:
       - "./etc:/etc/traefik"
   home:
     image: "defn/home"
-    entrypoint: [ "/service", "sshd" ]
+    entrypoint: [ "sleep", "86400000" ]
     depends_on:
       - pause
     network_mode: service:pause
