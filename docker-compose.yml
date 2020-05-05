@@ -10,6 +10,7 @@ services:
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
+      - --entrypoints.repl.proxyprotocol.insecure
       - --entrypoints.http.address=:80
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -18,6 +19,9 @@ services:
       - --entrypoints.https.address=:443
       - --entrypoints.https.proxyprotocol.insecure
       - --entrypoints.https.http.tls.certResolver=le
+      - --entrypoints.repl.address=:9630
+      - --entrypoints.repl.proxyprotocol.insecure
+      - --entrypoints.repl.http.tls.certResolver=le
       - --providers.file.directory=/etc/traefik/conf.d
       - --providers.file.watch=true
       - --api.dashboard
