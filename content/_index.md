@@ -1,5 +1,5 @@
 ---
-title: Example
+title: kitt
 ---
 
-huh
+This is kitt's README.

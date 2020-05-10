@@ -85,11 +85,6 @@ steps:
 - name: local
   image: letfn/drone-hugo
 
-- name: gh-pages
-  image: letfn/drone-hugo
-  settings:
-    github_pages: true
-
 depends_on:
 - build
 

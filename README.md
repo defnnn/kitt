@@ -1,1 +1,1 @@
-content/overview/_index.md
+content/_index.md
