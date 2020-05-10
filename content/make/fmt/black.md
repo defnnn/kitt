@@ -3,4 +3,4 @@ title: black
 toc: false
 ---
 
-black formats the Pythons.
+black formats the Pythons
