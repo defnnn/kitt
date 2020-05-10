@@ -44,6 +44,7 @@ up: # Bring up networking and kitt
 		bash -c "ip link add dummy0 type dummy; ip addr add $(KITT_IP)/32 dev dummy0; ip link set dev dummy0 up"
 	if test "$(shell uname -s)" = "Darwin"; then $(MAKE) up-Darwin; fi
 	docker network create --subnet 172.31.188.0/24 kitt || true
+	docker-compose down || trued
 	docker-compose up -d
 
 up-Darwin:
