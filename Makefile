@@ -39,7 +39,7 @@ clean: # Remove certs
 	rm -f etc/acme/acme.json
 
 up: # Bring up networking and kitt
-	cp etc/acme/acme.json.whoa.bot /etc/acme/acme.json
+	cp etc/acme/acme.json.whoa.bot etc/acme/acme.json
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
 		bash -c "ip link add dummy0 type dummy; ip addr add $(KITT_IP)/32 dev dummy0; ip link set dev dummy0 up"
 	if test "$(shell uname -s)" = "Darwin"; then $(MAKE) up-Darwin; fi
