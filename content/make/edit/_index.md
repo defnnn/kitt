@@ -1,6 +1,6 @@
 ---
-title: lint
-weight: 2
+title: edit
+weight: 10
 hide_children: true
 ---
 
