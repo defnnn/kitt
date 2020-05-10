@@ -1,29 +1,22 @@
 SHELL := /bin/bash
 
-KITT_IP := 169.254.32.1
-
 .PHONY: docs
 
+KITT_IP := 169.254.32.1
+
 menu:
-	@perl -ne 'printf("%10s: %s\n","$$1","$$2") if m{^([\w+-]+):[^#]+#\s(.+)$$}' Makefile | sort -b
+	@perl -ne 'printf("%10s: %s\n","$$1","$$2") if m{^([\w+-]+):[^#]+#\s(.+)$$}' Makefile
 
 all: # Run everything except build
 	$(MAKE) fmt
 	$(MAKE) lint
 	$(MAKE) docs
-	$(MAKE) test
 
-fmt: # Format with isort, black
+fmt: # Format drone fmt
 	@echo
 	drone exec --pipeline $@
-	drone exec --pipeline $@-python
 
-lint: # Run pyflakes, mypy
-	@echo
-	drone exec --pipeline $@
-	drone exec --pipeline $@-python
-
-test: # Run tests
+lint: # Run drone lint
 	@echo
 	drone exec --pipeline $@
 
@@ -31,16 +24,13 @@ docs: # Build docs
 	@echo
 	drone exec --pipeline $@
 
-requirements: # Compile requirements
-	@echo
-	drone exec --pipeline $@
-
 build: # Build container
 	@echo
 	drone exec --pipeline $@ --secret-file ../.drone.secret
 
-watch: # Watch for changes
-	@trap 'exit' INT; while true; do fswatch -0 src content | while read -d "" event; do case "$$event" in *.py) figlet woke; make lint test; break; ;; *.md) figlet docs; make docs; ;; esac; done; sleep 1; done
+requirements:
+	@echo
+	drone exec --pipeline $@
 
 up: # Bring up networking
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \

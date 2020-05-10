@@ -147,6 +147,7 @@ html,
 body {
   background: #FFFFFF;
   color: #1E375A;
+  font-display: optional;
   font-family: 'Roboto', sans-serif;
   font-size: 15px;
   width: 100%;

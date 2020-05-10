@@ -31,59 +31,6 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: fmt-python
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: python
-  image: letfn/python
-  commands:
-  - . /app/venv/bin/activate && isort -rc src
-  - . /app/venv/bin/activate && black src
-
----
-kind: pipeline
-type: docker
-name: lint-python
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: everything
-  image: letfn/python
-  commands:
-  - . /app/venv/bin/activate && pyflakes src
-  - . /app/venv/bin/activate && mypy src
-
----
-kind: pipeline
-type: docker
-name: test
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: everything
-  image: letfn/python
-  commands:
-  - . /app/venv/bin/activate && pytest -v src
-
-depends_on:
-- fmt
-- fmt-python
-- lint
-- lint-python
-
----
-kind: pipeline
-type: docker
 name: requirements
 
 platform:
@@ -95,9 +42,7 @@ steps:
   image: letfn/python
   commands:
   - . /app/venv/bin/activate
-  - pip-compile /drone/src/requirements.in -o /tmp/requirements.in.txt
-  - if test -w . ; then cp /tmp/requirements.in.txt requirements.in.txt; else diff requirements.in.txt /tmp/requirements.in.txt || true; fi
-  - pip-compile /drone/src/requirements.in.txt requirements.dev -o /tmp/requirements.txt
+  - pip-compile /drone/src/requirements.in -o /tmp/requirements.txt
   - if test -w . ; then cp /tmp/requirements.txt requirements.txt; else diff requirements.txt /tmp/requirements.txt || true;  fi
 
 trigger:
@@ -124,13 +69,13 @@ steps:
     password:
       from_secret: docker_password
     repo: defn/kitt
-    skip_tls_verify: true
     tag: latest
     username:
       from_secret: docker_username
 
 depends_on:
-- test
+- fmt
+- lint
 
 ---
 kind: pipeline
@@ -152,5 +97,29 @@ steps:
 
 depends_on:
 - build
+
+---
+kind: secret
+name: docker_username
+
+get:
+  path: kv/data/drone/common
+  name: docker_username
+
+---
+kind: secret
+name: docker_password
+
+get:
+  path: kv/data/drone/common
+  name: docker_password
+
+---
+kind: secret
+name: github_token
+
+get:
+  path: kv/data/drone/common
+  name: github_token
 
 ...
