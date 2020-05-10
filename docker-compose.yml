@@ -14,6 +14,7 @@ services:
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
       - --entrypoints.http.http.redirections.entryPoint.scheme=https
+      - --certificatesResolvers.le.acme.email=le@example.com
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --entrypoints.https.address=:443
       - --entrypoints.https.proxyprotocol.insecure
