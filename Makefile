@@ -68,6 +68,8 @@ demo:
 	docker run -d --rm --name app1 --net cnet -l "id=app1" cilium/demo-httpd
 	@figlet good
 	-docker run --rm -ti --net cnet -l "id=app2" cilium/demo-client curl http://app1/public
+	@figlet no good
+	-docker run --rm -ti --net cnet -l "id=app2" cilium/demo-client curl -X POST -d {} http://app1/public
 	@figlet dropped
 	-docker run --rm -ti --net cnet -l "id=app3" cilium/demo-client curl -m 2 http://app1/public
 	@figlet denied
