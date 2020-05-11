@@ -2,8 +2,6 @@ SHELL := /bin/bash
 
 .PHONY: docs
 
-KITT_IP := 169.254.32.1
-
 menu:
 	@perl -ne 'printf("%10s: %s\n","$$1","$$2") if m{^([\w+-]+):[^#]+#\s(.+)$$}' Makefile
 
@@ -34,6 +32,8 @@ edit:
 requirements:
 	@echo
 	drone exec --pipeline $@
+
+KITT_IP := 169.254.32.1
 
 clean: # Remove certs
 	rm -f etc/acme/acme.json
