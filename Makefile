@@ -55,4 +55,4 @@ up-Darwin:
 down: # Shut down docker-compose and dummy interface
 	docker-compose down || true
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
-		bash -c "ip addr del $(KITT_IP)/32 dev dummy0; ip link set dev dummy0 down"
+		bash -c "ip addr del $(KITT_IP)/32 dev dummy0"
