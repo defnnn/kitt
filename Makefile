@@ -52,6 +52,6 @@ up-Darwin:
 	for ip in $(KITT_IP); do sudo ifconfig lo0 alias "$$ip" netmask 255.255.255.255; done
 
 down: # Shut down docker-compose and dummy interface
-	docker-compose down || true
+	docker-compose down --remove-orphans || true
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
 		bash -c "ip addr del $(KITT_IP)/32 dev dummy0"
