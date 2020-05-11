@@ -39,7 +39,7 @@ services:
   cilium:
     container_name: cilium
     image: docker.io/cilium/cilium:v1.7.3
-    command: cilium-agent --kvstore consul --kvstore-opt consul.address=127.0.0.1:8500 -t vxlan --enable-ipv6=false
+    command: cilium-agent --kvstore consul --kvstore-opt consul.address=127.0.0.1:8501 -t vxlan --enable-ipv6=false
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./data:/var/run/cilium
@@ -70,7 +70,7 @@ services:
   consul:
     container_name: cilium-kvstore
     ports:
-      - "8500:8500"
+      - "8501:8500"
     environment:
       - "CONSUL_LOCAL_CONFIG={\"skip_leave_on_interrupt\": true, \"disable_update_check\": true}"
     image: docker.io/library/consul
