@@ -29,7 +29,7 @@ build: # Build container
 	drone exec --pipeline $@
 
 edit:
-	docker-compose -f docker-compose.docs.yml up
+	docker-compose -f docker-compose.docs.yml up --quiet-pull
 
 requirements:
 	@echo
@@ -50,7 +50,6 @@ up: # Bring up networking and kitt
 
 up-Darwin:
 	for ip in $(KITT_IP); do sudo ifconfig lo0 alias "$$ip" netmask 255.255.255.255; done
-
 
 down: # Shut down docker-compose and dummy interface
 	docker-compose down || true
