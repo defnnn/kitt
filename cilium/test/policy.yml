@@ -1,0 +1,14 @@
+- labels:
+    - key: name
+      value: l7-rule
+  endpointSelector:
+    matchLabels:
+      id: red
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            id: black
+      toPorts:
+        - ports:
+            - port: '80'
+              protocol: TCP

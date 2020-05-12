@@ -33,44 +33,64 @@ requirements:
 	@echo
 	drone exec --pipeline $@
 
+pkg:
+	@echo
+	drone exec --pipeline $@
+
 KITT_IP := 169.254.32.1
 
-clean: # Remove certs
+main: target/main.js # Compile release
+	true
+
+clean:
+	rm -rf target .shadow-cljs node_modules main
 	rm -f etc/acme/acme.json
+
+install:
+	npm install
+
+watch:
+	./node_modules/.bin/shadow-cljs watch app
+
+repl:
+	./node_modules/.bin/shadow-cljs cljs-repl app
+
+release: ./node_modules/.bin/shadow-cljs
+	./node_modules/.bin/shadow-cljs release app
+
+node_modules/.bin/shadow-cljs:
+	$(MAKE) install
+
+target/main.js:
+	$(MAKE) release
 
 up: # Bring up networking and kitt
 	cp etc/acme/acme.json.whoa.bot etc/acme/acme.json
 	chmod 600 etc/acme/acme.json
-	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
-		mount bpffs /sys/fs/bpf -t bpf
+	docker-compose down || true
+	docker-compose up -d
+
+down: # Shut down docker-compose and dummy interface
+	docker-compose down --remove-orphans || true
+
+once:
+	$(MAKE) network || true
+	$(MAKE) linux|| true
+	$(MAKE) macos || true
+
+network:
+	docker network create --subnet 172.31.188.0/24 kitt
+
+linux:
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
 		bash -c "ip link add dummy0 type dummy; ip addr add $(KITT_IP)/32 dev dummy0; ip link set dev dummy0 up"
-	docker network create --subnet 172.31.188.0/24 kitt || true
-	docker-compose down || trued
-	docker-compose up -d
+
+linux-down:
+	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
+    bash -c "ip addr del $(KITT_IP)/32 dev dummy0"
 
 macos:
 	for ip in $(KITT_IP); do sudo ifconfig lo0 alias "$$ip" netmask 255.255.255.255; done
 
-down: # Shut down docker-compose and dummy interface
-	docker-compose down --remove-orphans || true
-	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
-		bash -c "ip addr del $(KITT_IP)/32 dev dummy0"
-
-	docker rm -f app1 || true
-	docker run -d --rm --name app1 --net cnet -l "id=app1" cilium/demo-httpd
-
-demo:
-	docker network create --driver cilium --ipam-driver cilium cnet || true
-	docker-compose exec -T cilium cilium policy delete --all
-	cat demo.yml | docker run --rm -i letfn/python-cli yq . | docker-compose exec -T cilium cilium policy import -
-	docker rm -f app1 || true
-	docker run -d --rm --name app1 --net cnet -l "id=app1" cilium/demo-httpd
-	@figlet good
-	-docker run --rm -ti --net cnet -l "id=app2" cilium/demo-client curl http://app1/public
-	@figlet no good
-	-docker run --rm -ti --net cnet -l "id=app2" cilium/demo-client curl -X POST -d {} http://app1/public
-	@figlet dropped
-	-docker run --rm -ti --net cnet -l "id=app3" cilium/demo-client curl -m 2 http://app1/public
-	@figlet denied
-	-docker run --rm -ti --net cnet -l "id=app2" cilium/demo-client curl -si http://app1/private
+macos-down:
+	for ip in $(KITT_IP); do sudo ifconfig lo0 -alias "$$ip" netmask 255.255.255.255; done

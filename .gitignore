@@ -1,3 +1,11 @@
 data
 public
+
+node_modules/
+target/
+/yarn.lock
+.shadow-cljs/
+.nrepl-port
+/main-*
+
 acme.json

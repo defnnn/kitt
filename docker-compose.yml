@@ -10,6 +10,8 @@ services:
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
+      - --entrypoints.ssh.address=:22
+      - --entrypoints.openvpn.address=:1194
       - --entrypoints.http.address=:80
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -27,51 +29,12 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
     ports:
+      - "22:22"
       - 80:80
       - 443:443
+      - 1194:1194
   portainer:
     image: portainer/portainer
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc/data/portainer:/data"
-    ports:
-      - 9000
-  cilium:
-    container_name: cilium
-    image: docker.io/cilium/cilium:v1.7.3
-    command: cilium-agent --kvstore consul --kvstore-opt consul.address=127.0.0.1:8501 -t vxlan --enable-ipv6=false
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./data:/var/run/cilium
-      - /var/run/docker/netns:/var/run/docker/netns
-      - /sys/fs/bpf:/sys/fs/bpf
-    network_mode: "host"
-    cap_add:
-      - "NET_ADMIN"
-      - "NET_RAW"
-      - "SYS_ADMIN"
-    privileged: true
-    depends_on:
-      - consul
-  cilium_docker:
-    container_name: cilium-docker-plugin
-    image: docker.io/cilium/docker-plugin:v1.7.3
-    command: cilium-docker
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ./data:/var/run/cilium
-      - /run/docker/plugins:/run/docker/plugins
-    network_mode: "host"
-    cap_add:
-      - "NET_ADMIN"
-    privileged: true
-    depends_on:
-      - cilium
-  consul:
-    container_name: cilium-kvstore
-    ports:
-      - "8501:8500"
-    environment:
-      - "CONSUL_LOCAL_CONFIG={\"skip_leave_on_interrupt\": true, \"disable_update_check\": true}"
-    image: docker.io/library/consul
-    command: agent -client=0.0.0.0 -server -bootstrap-expect 1
