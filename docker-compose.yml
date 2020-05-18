@@ -29,7 +29,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
     ports:
-      - "22:22"
+      - "2222:22"
       - 80:80
       - 443:443
       - 1194:1194
