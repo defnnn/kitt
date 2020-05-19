@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# USAGE: example [flags] args
+#
+# This is an example
+
+function options {
+  DEFINE_string name 'world' "somebody's name" n
+}
+
+function main {
+  echo "example: ${FLAGS_name:-}: $@"
+}
+
+source sub "$0" "$@"
