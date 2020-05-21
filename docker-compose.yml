@@ -50,3 +50,11 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc/data/portainer:/data"
+  dnsmasq:
+    build: .
+    cap_add:
+      - NET_ADMIN
+    command: --address=/${KITT_DOMAIN}/169.254.32.1
+    ports:
+      - 169.254.32.1:53:53/tcp
+      - 169.254.32.1:53:53/udp

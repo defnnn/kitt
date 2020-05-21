@@ -1,4 +1,5 @@
 SHELL := /bin/bash
+KITT_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 
 .PHONY: docs
 
@@ -84,10 +85,20 @@ network:
 linux:
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
 		bash -c "ip link add dummy0 type dummy; ip addr add $(KITT_IP)/32 dev dummy0; ip link set dev dummy0 up"
+	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
+		bash -c "mkdir -p /etc/systemd/resolved.conf.d"
+	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
+		bash -c "cat $(KITT_DIR)/etc/dns/systemd-resolved/kitt_domain.conf | sed 's/KITT_DOMAIN/$(KITT_DOMAIN)/' > /etc/systemd/resolved.conf.d/kitt_domain.conf"
+	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
+		bash -c "systemctl restart systemd-resolved.service"
 
 linux-down:
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
-    bash -c "ip addr del $(KITT_IP)/32 dev dummy0"
+		bash -c "ip addr del $(KITT_IP)/32 dev dummy0 || true"
+	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
+		bash -c "rm  /etc/systemd/resolved.conf.d/kitt_domain.conf || true"
+	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
+		bash -c "systemctl restart systemd-resolved.service"
 
 macos:
 	for ip in $(KITT_IP); do sudo ifconfig lo0 alias "$$ip" netmask 255.255.255.255; done

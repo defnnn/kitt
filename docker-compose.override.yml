@@ -4,19 +4,19 @@ services:
   traefik:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-api.rule=Host(`traefik.whoa.bot`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik-api.rule=Host(`traefik.${KITT_DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
-      - "traefik.http.routers.traefik-dash.rule=Host(`traefik.whoa.bot`)"
+      - "traefik.http.routers.traefik-dash.rule=Host(`traefik.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
   consul:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.consul.rule=Host(`consul.whoa.bot`)"
+      - "traefik.http.routers.consul.rule=Host(`consul.${KITT_DOMAIN}`)"
       - "traefik.http.services.consul.loadbalancer.server.port=8500"
   portainer:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.portainer.rule=Host(`portainer.whoa.bot`)"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.${KITT_DOMAIN}`)"
       - "traefik.http.services.portainer.loadbalancer.server.port=9000"
 
 networks:
