@@ -3,6 +3,7 @@ version: '3.7'
 services:
   traefik:
     image: "traefik:v2.2.1"
+    env_file: .env
     command:
       - --providers.docker
       - --providers.docker.usebindportip
@@ -16,8 +17,12 @@ services:
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
       - --entrypoints.http.http.redirections.entryPoint.scheme=https
-      - --certificatesResolvers.le.acme.email=le@example.com
-      - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
+      - --certificatesResolvers.le.acme.email=${CF_API_EMAIL}
+      - --certificatesResolvers.le.acme.storage=/etc/traefik/conf.d/acme.json
+      - --certificatesResolvers.le.acme.dnschallenge=true
+      - --certificatesResolvers.le.acme.dnschallenge.provider=cloudflare
+      - --certificatesResolvers.le.acme.dnschallenge.delaybeforecheck=0
+      - --certificatesResolvers.le.acme.dnschallenge.resolvers=1.1.1.1
       - --entrypoints.https.address=:443
       - --entrypoints.https.proxyprotocol.insecure
       - --entrypoints.https.http.tls.certResolver=le
@@ -27,7 +32,7 @@ services:
       - --api
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./etc:/etc/traefik"
+      - "./etc/conf.d:/etc/traefik/conf.d"
     ports:
       - "2222:22"
       - 80:80
