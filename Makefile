@@ -33,36 +33,7 @@ requirements:
 	@echo
 	drone exec --pipeline $@
 
-pkg:
-	@echo
-	drone exec --pipeline $@
-
 KITT_IP := 169.254.32.1
-
-main: target/main.js # Compile release
-	true
-
-clean:
-	rm -rf target .shadow-cljs node_modules main
-	rm -f etc/acme/acme.json
-
-install:
-	npm install
-
-watch:
-	./node_modules/.bin/shadow-cljs watch app
-
-repl:
-	./node_modules/.bin/shadow-cljs cljs-repl app
-
-release: ./node_modules/.bin/shadow-cljs
-	./node_modules/.bin/shadow-cljs release app
-
-node_modules/.bin/shadow-cljs:
-	$(MAKE) install
-
-target/main.js:
-	$(MAKE) release
 
 up: # Bring up networking and kitt
 	cp etc/acme/acme.json.whoa.bot etc/acme/acme.json
