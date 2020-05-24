@@ -40,13 +40,21 @@ services:
     command: agent -client=0.0.0.0 -server -bootstrap-expect 1 -ui
     volumes:
       - "./etc/data/consul:/consul/data"
-  hera:
-    image: aschzero/hera:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${HOME}/.cloudflared:/certs
   portainer:
     image: portainer/portainer
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc/data/portainer:/data"
+  hera:
+    image: aschzero/hera:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${HOME}/.cloudflared:/certs
+  cloudflared:
+    image: letfn/cloudflared
+    restart: always
+    volumes:
+      - ${HOME}/.cloudflared:/etc/cloudflared
+    environment:
+      - TUNNEL_URL=https://traefik.whoa.bot
+      - TUNNEL_HOSTNAME=traefik.defn.sh
