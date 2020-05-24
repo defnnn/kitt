@@ -38,7 +38,6 @@ KITT_IP := 169.254.32.1
 up: # Bring up networking and kitt
 	cp etc/acme/acme.json.whoa.bot etc/acme/acme.json
 	chmod 600 etc/acme/acme.json
-	docker-compose down || true
 	docker-compose up -d
 
 down: # Shut down docker-compose and dummy interface
