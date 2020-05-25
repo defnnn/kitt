@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# USAGE: kitt recreate [flags] --  args
+#
+# args: arguments to docker-compose
+
+function main {
+  docker-compose rm -f -s "$@"
+  kitt up "$@"
+}
+
+source sub "$0" "$@"

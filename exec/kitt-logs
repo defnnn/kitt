@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# USAGE: kitt logs [flags] --  args
+#
+# args: arguments to docker-compose
+
+function main {
+  docker-compose logs -f "$@"
+}
+
+source sub "$0" "$@"

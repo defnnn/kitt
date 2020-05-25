@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# USAGE: kitt restart [flags] --  args
+#
+# args: arguments to docker-compose
+
+function main {
+  docker-compose restart "$@"
+}
+
+source sub "$0" "$@"

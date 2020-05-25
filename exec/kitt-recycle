@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# USAGE: kitt recycle [flags] --  args
+#
+# args: arguments to docker-compose
+
+function main {
+  docker-compose pull "$@"
+  kitt recreate "$@"
+}
+
+source sub "$0" "$@"

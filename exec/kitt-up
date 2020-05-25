@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# USAGE: kitt up [flags] args
+# USAGE: kitt up [flags] -- args
 #
 # args: arguments to docker-compose
 
