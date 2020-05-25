@@ -33,13 +33,19 @@ requirements:
 	@echo
 	drone exec --pipeline $@
 
-ci-test: # Run tests in drone
+ci-test: # Run drone pipeline for tests
 	@echo
 	drone exec --pipeline test
 
 test: # Run tests
-	cd test && $(MAKE) || true
-	git diff test
+	cd test && $(MAKE)
+	cd test && git diff
+
+drone-test: # Run tests with drone specific setup
+	mkdir /tmp/src
+	rsync -ia . /tmp/src/.
+	cd /tmp/src/test && $(MAKE)
+	cd /tmp/src/test && git diff
 
 KITT_IP := 169.254.32.1
 

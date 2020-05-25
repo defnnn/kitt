@@ -14,7 +14,7 @@ all:
 	$(MAKE) always
 
 always:
-	$(MAKE) --always-make test
+	-$(MAKE) --always-make test
 
 test: $(patsubst %.test,%.stdout,$(call rwildcard,,%.test))
 

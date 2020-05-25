@@ -126,6 +126,6 @@ steps:
   image: letfn/python
   commands:
   - (cd test && make setup)
-  - make test
+  - make drone-test
 
 ...
