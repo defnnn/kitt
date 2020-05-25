@@ -2,6 +2,8 @@
 
 # USAGE: kitt logs [flags] --  args
 #
+# Calls docker-compose logs to tail service logs
+#
 # args: arguments to docker-compose
 
 function main {

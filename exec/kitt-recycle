@@ -2,10 +2,13 @@
 
 # USAGE: kitt recycle [flags] --  args
 #
+# Calls docker-compose build/pull to get the latest images and recreates
+# services.
+#
 # args: arguments to docker-compose
 
 function main {
-  docker-compose pull "$@"
+  docker-compose build --pull "$@"
   kitt recreate "$@"
 }
 

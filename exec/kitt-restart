@@ -2,6 +2,9 @@
 
 # USAGE: kitt restart [flags] --  args
 #
+# Calls docker-compose restart to restart services.  Does not reload
+# configuration; use recreate for that.
+#
 # args: arguments to docker-compose
 
 function main {

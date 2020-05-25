@@ -2,6 +2,8 @@
 
 # USAGE: kitt up [flags] -- args
 #
+# Calls docker-compose up to bring up services.
+#
 # args: arguments to docker-compose
 
 function options {
