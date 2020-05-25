@@ -15,9 +15,20 @@
 #- limitations under the License.
 
 # USAGE: kitt sub-command
+#
+# sub-commands:
+#   up: bring up services
+#   down: shut down services
+#   restart: restart services
+#   recreate: delete and bring up services
+#   recycle: pull images and recreate services
+
+function options {
+  true
+}
 
 function main {
-  true 
+  flags_help
 }
 
 source sub "$0" "$@"
