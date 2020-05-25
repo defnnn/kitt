@@ -125,7 +125,7 @@ steps:
 - name: everything
   image: letfn/python
   commands:
-  - cd test && make setup
+  - (cd test && make setup)
   - make test
 
 ...

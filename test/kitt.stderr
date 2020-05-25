@@ -1,11 +1,11 @@
 USAGE: kitt sub-command
 
 sub-commands:
-  up: bring up services
-  down: shut down services
-  restart: restart services
-  recreate: delete and bring up services
-  recycle: pull images and recreate services
+........up: bring up services
+......down: shut down services
+...restart: restart services
+..recreate: delete and bring up services
+...recycle: pull images and recreate services
 
 flags:
   -h,--help:  show this help (default: false)
