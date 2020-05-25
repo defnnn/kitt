@@ -14,21 +14,18 @@
 #- See the License for the specific language governing permissions and
 #- limitations under the License.
 
-# USAGE: kitt sub-command
+# USAGE: kitt up [flags] -- args
 #
-# sub-commands:
-# ........up: bring up services
-# ......down: shut down services
-# ...restart: restart services
-# ..recreate: delete and bring up services
-# ...recycle: pull images and recreate services
+# Calls docker-compose up to bring up services.
+#
+# args: arguments to docker-compose
 
 function options {
-  true
+  DEFINE_boolean fg "$FLAGS_FALSE" "run in the foreground" D
 }
 
 function main {
-  flags_help
+  docker-compose up $(if [[ "$FLAGS_fg" == "$FLAGS_FALSE" ]]; then echo "-d"; fi) "$@"
 }
 
 source sub "$0" "$@"

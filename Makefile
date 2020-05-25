@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: docs
+.PHONY: docs test
 
 menu:
 	@perl -ne 'printf("%10s: %s\n","$$1","$$2") if m{^([\w+-]+):[^#]+#\s(.+)$$}' Makefile
@@ -33,15 +33,21 @@ requirements:
 	@echo
 	drone exec --pipeline $@
 
+ci-test: # Run drone pipeline for tests
+	@echo
+	drone exec --pipeline test
+
+test: # Run tests
+	cd test && $(MAKE)
+	cd test && git diff
+
+drone-test: # Run tests with drone specific setup
+	mkdir /tmp/src
+	rsync -ia . /tmp/src/.
+	cd /tmp/src/test && $(MAKE)
+	cd /tmp/src/test && git diff
+
 KITT_IP := 169.254.32.1
-
-up: # Bring up networking and kitt
-	cp etc/acme/acme.json.whoa.bot etc/acme/acme.json
-	chmod 600 etc/acme/acme.json
-	docker-compose up -d
-
-down: # Shut down docker-compose and dummy interface
-	docker-compose down --remove-orphans || true
 
 once:
 	$(MAKE) network || true

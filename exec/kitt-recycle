@@ -14,21 +14,20 @@
 #- See the License for the specific language governing permissions and
 #- limitations under the License.
 
-# USAGE: kitt sub-command
+# USAGE: kitt recycle [flags] --  args
 #
-# sub-commands:
-# ........up: bring up services
-# ......down: shut down services
-# ...restart: restart services
-# ..recreate: delete and bring up services
-# ...recycle: pull images and recreate services
+# Calls docker-compose build/pull to get the latest images and recreates
+# services.
+#
+# args: arguments to docker-compose
 
 function options {
   true
 }
 
 function main {
-  flags_help
+  docker-compose build --pull "$@"
+  kitt recreate "$@"
 }
 
 source sub "$0" "$@"

@@ -1,0 +1,10 @@
+USAGE: kitt recreate [flags] --  args
+
+Calls docker-compose to remove containers and bring them up from scratch.
+Use recreate when configuration changes since restart will retain the running
+config.
+
+args: arguments to docker-compose
+
+flags:
+  -h,--help:  show this help (default: false)
