@@ -1,0 +1,11 @@
+#!/bin/bash
+
+# USAGE: kitt down [flags] args
+#
+# args: arguments to docker-compose
+
+function main {
+  docker-compose down --remove-orphans "$@"
+}
+
+source sub "$0" "$@"
