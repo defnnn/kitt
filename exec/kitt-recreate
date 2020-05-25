@@ -8,6 +8,10 @@
 #
 # args: arguments to docker-compose
 
+function options {
+  true
+}
+
 function main {
   docker-compose rm -f -s "$@"
   kitt up "$@"
