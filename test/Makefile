@@ -9,6 +9,10 @@ rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $2,$d)
 		$@ $(patsubst %.stdout,%.stderr,$@) \
 		|| (touch $<; false)
 
+all:
+	touch *.test
+	$(MAKE) always
+
 test: $(patsubst %.test,%.stdout,$(call rwildcard,,%.test))
 
 always:
