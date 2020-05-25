@@ -112,4 +112,20 @@ steps:
   - pip-compile /drone/src/requirements.in -o /tmp/requirements.txt
   - if test -w . ; then cp /tmp/requirements.txt requirements.txt; else diff requirements.txt /tmp/requirements.txt || true;  fi
 
+---
+kind: pipeline
+type: docker
+name: test
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: everything
+  image: letfn/python
+  commands:
+  - cd test && make setup
+  - make test
+
 ...

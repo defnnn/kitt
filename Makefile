@@ -33,10 +33,13 @@ requirements:
 	@echo
 	drone exec --pipeline $@
 
-rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $2,$d))
+ci-test: # Run tests in drone
+	@echo
+	drone exec --pipeline test
 
-test:
-	cd test && $(MAKE)
+test: # Run tests
+	cd test && $(MAKE) || true
+	git diff test
 
 KITT_IP := 169.254.32.1
 

@@ -28,6 +28,7 @@ function options {
 }
 
 function main {
+  echo hey
   flags_help
 }
 
