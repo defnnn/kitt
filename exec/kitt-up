@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# USAGE: kitt up [flags] args
+#
+# args: arguments to docker-compose
+
+function options {
+  DEFINE_boolean fg "$FLAGS_FALSE" "run in the foreground" D
+}
+
+function main {
+  docker-compose up $(if [[ "$FLAGS_fg" == "$FLAGS_FALSE" ]]; then echo "-d"; fi) "$@"
+}
+
+source sub "$0" "$@"
