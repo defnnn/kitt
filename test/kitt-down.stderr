@@ -1,0 +1,9 @@
+USAGE: kitt down [flags] args
+
+Calls docker-compose down to shut down services.  Services that are not
+defined in docker-compose.yml will be removed.
+
+args: arguments to docker-compose
+
+flags:
+  -h,--help:  show this help (default: false)

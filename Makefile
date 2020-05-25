@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: docs
+.PHONY: docs test
 
 menu:
 	@perl -ne 'printf("%10s: %s\n","$$1","$$2") if m{^([\w+-]+):[^#]+#\s(.+)$$}' Makefile
@@ -32,6 +32,11 @@ edit:
 requirements:
 	@echo
 	drone exec --pipeline $@
+
+rwildcard = $(foreach d,$(wildcard $1*),$(call rwildcard,$d/,$2) $(filter $2,$d))
+
+test:
+	cd test && $(MAKE)
 
 KITT_IP := 169.254.32.1
 

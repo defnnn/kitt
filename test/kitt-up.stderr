@@ -1,0 +1,9 @@
+USAGE: kitt up [flags] -- args
+
+Calls docker-compose up to bring up services.
+
+args: arguments to docker-compose
+
+flags:
+  -D,--[no]fg:  run in the foreground (default: false)
+  -h,--help:  show this help (default: false)
