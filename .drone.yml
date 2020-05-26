@@ -115,7 +115,7 @@ steps:
 ---
 kind: pipeline
 type: docker
-name: test
+name: ci-test
 
 platform:
   os: linux
