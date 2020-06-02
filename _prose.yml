@@ -4,4 +4,8 @@ metadata:
     - name: "layout"
       field:
         label: "layout"
-        value: "blog"
+        value: "article"
+    - name: "title"
+      field:
+        label: "title"
+        value: ""
