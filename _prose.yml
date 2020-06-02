@@ -3,9 +3,11 @@ metadata:
   content:
     - name: "layout"
       field:
+        element: text
         label: "layout"
         value: "article"
     - name: "title"
       field:
+        element: text
         label: "title"
         value: ""
