@@ -3,5 +3,4 @@ metadata:
   _posts:
     - name: "layout"
       field:
-        element: "hidden"
         value: "blog"
