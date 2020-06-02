@@ -37,7 +37,7 @@ In addition to the normal asdf setup, put this into your `PATH`: `$HOME/.asdf/in
 
 ## Run kitt cli
 
-``
+```
 kitt
 kitt up --help
 ```
