@@ -1,8 +1,3 @@
----
-title: kitt
-published: true
----
-
 ## Install asdf-vm
 
 See instructions at https://github.com/asdf-vm/asdf
