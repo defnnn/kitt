@@ -4,7 +4,7 @@ category: blog
 published: false
 title: Untitled
 tags:
-  - apples
+  - mangos
 ---
 ## Install asdf-vm
 
