@@ -1,3 +1,11 @@
+---
+layout: blog
+category: blog
+published: false
+title: Untitled
+tags:
+  - apples
+---
 ## Install asdf-vm
 
 See instructions at https://github.com/asdf-vm/asdf
