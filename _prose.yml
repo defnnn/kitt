@@ -1,6 +1,6 @@
 rooturl: content
 metadata:
-  _posts:
+  content:
     - name: "layout"
       field:
         value: "blog"
