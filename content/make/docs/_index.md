@@ -1,5 +1,5 @@
 ---
-title: docs
+title: Documentation
 weight: 9
 hide_children: true
 published: true
