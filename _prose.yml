@@ -3,4 +3,5 @@ metadata:
   content:
     - name: "layout"
       field:
+        label: "layout"
         value: "blog"
