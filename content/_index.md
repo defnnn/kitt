@@ -1,5 +1,6 @@
 ---
 title: kitt
+published: true
 ---
 
-Supposed to be something here...
+Made an edit with prose.io
