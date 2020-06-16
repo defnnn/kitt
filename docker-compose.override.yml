@@ -4,10 +4,18 @@ services:
   traefik:
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-api.rule=Host(`traefik.whoa.bot`,`traefik.defn.sh`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik.{domain:.+}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
-      - "traefik.http.routers.traefik-dash.rule=Host(`traefik.whoa.bot`,`traefik.defn.sh`)"
+      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
+  hello:
+    labels:
+      - "traefik.http.routers.hello.tls=true"
+      - "traefik.http.routers.hello.tls.certresolver=le"
+      - "traefik.http.routers.hello.tls.domains[0].main=hello.whoa.bot"
+      - "traefik.http.routers.hello.tls.domains[0].sans=*.whoa.bot"
+      - "traefik.http.routers.hello.tls.domains[1].sans=*.defn.sh"
+      - "traefik.http.routers.hello.tls.domains[2].sans=*.eldri.ch"
 
 networks:
   default:

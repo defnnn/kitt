@@ -16,7 +16,8 @@ services:
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
       - --entrypoints.http.http.redirections.entryPoint.scheme=https
-      - --certificatesResolvers.le.acme.email=le@example.com
+      - --certificatesResolvers.le.acme.dnsChallenge.provider=cloudflare
+      - --certificatesResolvers.le.acme.email=${CF_API_EMAIL}
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --entrypoints.https.address=:443
       - --entrypoints.https.proxyprotocol.insecure
@@ -25,14 +26,20 @@ services:
       - --providers.file.watch=true
       - --api.dashboard
       - --api
+    environment:
+      - CF_API_EMAIL
+      - CF_DNS_API_TOKEN
+      - CF_ZONE_API_TOKEN
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
     ports:
-      - "2222:22"
-      - 80:80
-      - 443:443
-      - 1194:1194
+      - 169.254.32.1:22:22
+      - 169.254.32.1:80:80
+      - 169.254.32.1:443:443
+      - 169.254.32.1:1194:1194
+  hello:
+    image: nginx
   cloudflared:
     image: letfn/cloudflared
     restart: always
@@ -41,3 +48,18 @@ services:
     environment:
       - TUNNEL_URL=https://traefik.whoa.bot
       - TUNNEL_HOSTNAME=traefik.defn.sh
+  zerotier:
+    image: letfn/zerotier
+    restart: always
+    volumes:
+      - ./etc/zerotier/zerotier-one:/var/lib/zerotier-one
+      - ./etc/zerotier/config:/data/config
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+      - SYS_ADMIN
+    devices:
+      - /dev/net/tun
+    links:
+      - traefik
+    privileged: true

@@ -19,22 +19,21 @@ KITT_IP := 169.254.32.1
 
 once:
 	$(MAKE) network || true
-	$(MAKE) linux|| true
-	$(MAKE) macos || true
+	$(MAKE) os-$(shell uname -s) || true
 
 network:
 	docker network create --subnet 172.31.188.0/24 kitt
 
-linux:
+os-Linux:
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
 		bash -c "ip link add dummy0 type dummy; ip addr add $(KITT_IP)/32 dev dummy0; ip link set dev dummy0 up"
 
-linux-down:
+os-Linux-down:
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
     bash -c "ip addr del $(KITT_IP)/32 dev dummy0"
 
-macos:
+os-Darwin:
 	for ip in $(KITT_IP); do sudo ifconfig lo0 alias "$$ip" netmask 255.255.255.255; done
 
-macos-down:
+os-Darwin-down:
 	for ip in $(KITT_IP); do sudo ifconfig lo0 -alias "$$ip" netmask 255.255.255.255; done
