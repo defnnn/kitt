@@ -38,8 +38,6 @@ services:
       - 169.254.32.1:80:80
       - 169.254.32.1:443:443
       - 169.254.32.1:1194:1194
-  hello:
-    image: nginx
   cloudflared:
     image: letfn/cloudflared
     restart: always
