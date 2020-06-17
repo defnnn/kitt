@@ -27,7 +27,6 @@ services:
       - --api.dashboard
       - --api
     environment:
-      - CF_API_EMAIL
       - CF_DNS_API_TOKEN
       - CF_ZONE_API_TOKEN
     volumes:
