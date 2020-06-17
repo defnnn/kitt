@@ -8,6 +8,11 @@ services:
       - "traefik.http.routers.traefik-api.service=api@internal"
       - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
+    ports:
+      - ${KITT_IP}:22:22
+      - ${KITT_IP}:80:80
+      - ${KITT_IP}:443:443
+      - ${KITT_IP}:1194:1194
 
 networks:
   default:

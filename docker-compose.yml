@@ -32,11 +32,6 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
-    ports:
-      - 169.254.32.1:22:22
-      - 169.254.32.1:80:80
-      - 169.254.32.1:443:443
-      - 169.254.32.1:1194:1194
   cloudflared:
     image: letfn/cloudflared
     restart: always
