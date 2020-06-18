@@ -108,7 +108,7 @@ steps:
 - name: ownership
   image: defn/home
   commands:
-  - if ! test -w .; then sudo chown -R -h app:app .; done
+  - if ! test -w .; then sudo chown -R -h app:app .; fi
 
 - name: checking
   image: letfn/python
