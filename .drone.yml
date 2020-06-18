@@ -110,12 +110,6 @@ steps:
   commands:
   - if ! test -w .; then sudo chown -R -h app:app .; fi
 
-- name: checking
-  image: letfn/python
-  commands:
-  - ls -ld /drone/src
-  - ls -ld /drone/src/*
-
 ---
 kind: pipeline
 type: docker
@@ -126,12 +120,21 @@ platform:
   arch: amd64
 
 steps:
+- name: checking
+  image: letfn/python
+  commands:
+  - ls -ld /drone/src
+  - ls -ld /drone/src/*
+
 - name: everything
   image: letfn/python
   commands:
   - . /app/venv/bin/activate
   - pip-compile /drone/src/requirements.in -o /tmp/requirements.txt
   - if test -w . ; then cp /tmp/requirements.txt requirements.txt; else diff requirements.txt /tmp/requirements.txt || true;  fi
+
+depends_on:
+- meh
 
 ---
 kind: pipeline
