@@ -109,6 +109,7 @@ steps:
   image: defn/home
   commands:
   - if ! test -w .; then sudo chown -R -h app:app .; done
+
 - name: checking
   image: letfn/python
   commands:
