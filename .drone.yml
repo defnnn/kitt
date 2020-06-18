@@ -98,6 +98,26 @@ get:
 ---
 kind: pipeline
 type: docker
+name: meh
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: ownership
+  image: defn/home
+  commands:
+  - set -x; sudo chown app:app /drone/src
+- name: checking
+  image: letfn/python
+  commands:
+  - ls -ld /drone/src
+  - ls -ld /drone/src/*
+
+---
+kind: pipeline
+type: docker
 name: requirements
 
 platform:
