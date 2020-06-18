@@ -108,7 +108,7 @@ steps:
 - name: ownership
   image: defn/home
   commands:
-  - set -x; sudo chown app:app /drone/src
+  - if ! test -w .; then sudo chown -R -h app:app .; done
 - name: checking
   image: letfn/python
   commands:
