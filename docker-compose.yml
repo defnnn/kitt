@@ -32,6 +32,21 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
+    networks:
+      default:
+        ipv4_address: 172.31.188.200
+  traefik-proxy:
+    image: letfn/consul-envoy:v1.8.0-rc1-v0.14.1
+    environment:
+      CONSUL_HTTP_ADDR: consul:8500
+      CONSUL_GRPC_ADDR: consul:8502
+      SERVICE_CONFIG: /config/traefik.hcl
+      CENTRAL_CONFIG: /central_config/traefik.hcl
+    volumes:
+      - "./etc/service_config:/config"
+      - "./etc/central_config:/central_config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "traefik"]
+    network_mode: "service:traefik"
   cloudflared:
     image: letfn/cloudflared
     restart: always
@@ -55,3 +70,30 @@ services:
     links:
       - traefik
     privileged: true
+  consul:
+    image: consul:1.8.0-rc1
+    command: ["consul","agent","-config-file=/config/dc1.hcl"]
+    volumes:
+      - "./etc/consul_config:/config"
+    networks:
+      default:
+        ipv4_address: 172.31.188.99
+  consul-gateway:
+    image: letfn/consul-envoy:v1.8.0-rc1-v0.14.1
+    environment:
+      CONSUL_HTTP_ADDR: consul:8500
+      CONSUL_GRPC_ADDR: consul:8502
+    command: [
+      "consul",
+      "connect", "envoy",
+      "-mesh-gateway",
+      "-register",
+      "-address", "172.31.188.88:443",
+      "-wan-address", "172.31.188.88:443",
+      "--",
+      "-l", "debug"]
+    links:
+      - consul
+    networks:
+      default:
+        ipv4_address: 172.31.188.88
