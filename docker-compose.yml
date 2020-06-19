@@ -5,7 +5,7 @@ services:
     image: "traefik:v2.2.1"
     command:
       - --providers.docker
-      - --providers.docker.usebindportip
+      - --providers.docker.usebindportip=false
       - --providers.docker.exposedbydefault=false
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
@@ -35,8 +35,8 @@ services:
   traefik-proxy:
     image: letfn/consul-envoy:v1.8.0-rc1-v0.14.1
     environment:
-      CONSUL_HTTP_ADDR: consul:8500
-      CONSUL_GRPC_ADDR: consul:8502
+      CONSUL_HTTP_ADDR: 169.254.32.1:8500
+      CONSUL_GRPC_ADDR: 169.254.32.1:8502
       SERVICE_CONFIG: /config/traefik.hcl
       CENTRAL_CONFIG: /central_config/traefik.hcl
     volumes:
@@ -52,6 +52,8 @@ services:
     environment:
       - TUNNEL_URL=https://traefik.whoa.bot
       - TUNNEL_HOSTNAME=traefik.defn.sh
+    depends_on:
+      - consul
   zerotier:
     image: letfn/zerotier
     restart: always
@@ -78,8 +80,8 @@ services:
   consul-gateway:
     image: letfn/consul-envoy:v1.8.0-rc1-v0.14.1
     environment:
-      CONSUL_HTTP_ADDR: consul:8500
-      CONSUL_GRPC_ADDR: consul:8502
+      CONSUL_HTTP_ADDR: 169.254.32.1:8500
+      CONSUL_GRPC_ADDR: 169.254.32.1:8502
     command: [
       "consul",
       "connect", "envoy",
@@ -89,5 +91,5 @@ services:
       "-wan-address", "{{GetInterfaceIP \"eth0\"}}:443",
       "--",
       "-l", "debug"]
-    links:
+    depends_on:
       - consul
