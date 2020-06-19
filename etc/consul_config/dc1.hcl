@@ -9,8 +9,8 @@ server = true
 bootstrap_expect = 1
 ui = true
 
-bind_addr = "172.31.188.99"
-client_addr = "172.31.188.99"
+bind_addr = "{{GetInterfaceIP \"eth0\"}}"
+client_addr = "{{GetInterfaceIP \"eth0\"}}"
 
 ports {
   grpc = 8502
