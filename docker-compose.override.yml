@@ -4,8 +4,10 @@ services:
   traefik:
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.traefik-api.entrypoint=https"
       - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik.{domain:.+}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
+      - "traefik.http.routers.traefik-dash.entrypoint=https"
       - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
     ports:
@@ -16,6 +18,7 @@ services:
   consul:
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.consul.entrypoints=https"
       - "traefik.http.routers.consul.rule=HostRegexp(`consul.{domain:.+}`)"
       - "traefik.http.services.consul.loadbalancer.server.port=8500"
  
