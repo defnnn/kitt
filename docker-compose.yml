@@ -50,7 +50,7 @@ services:
     volumes:
       - ${HOME}/.cloudflared:/etc/cloudflared
     environment:
-      - TUNNEL_URL=https://traefik.whoa.bot
+      - TUNNEL_URL=https://traefik.kitt.run
       - TUNNEL_HOSTNAME=traefik.defn.sh
     depends_on:
       - consul
