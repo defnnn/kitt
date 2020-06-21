@@ -17,6 +17,3 @@ drone-test: # Run tests with drone specific setup
 
 once:
 	exec/kitt-setup
-
-consul-host:
-	consul agent -config-file="$(PWD)/etc/consul_config/dc0.hcl"
