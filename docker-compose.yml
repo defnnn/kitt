@@ -11,6 +11,7 @@ services:
       - --providers.consulcatalog.exposedbydefault=false
       - --providers.consulcatalog.endpoint.address=169.254.32.1:8500
       - --providers.consulcatalog.endpoint.datacenter=dc1
+      - --providers.consulcatalog.endpoint.token=${CONSUL_HTTP_TOKEN}
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
