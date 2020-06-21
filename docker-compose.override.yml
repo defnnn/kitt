@@ -5,10 +5,10 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-api.entrypoints=http,https"
-      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik.{domain:.+}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik{suffix:.?}.{domain:.+}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
       - "traefik.http.routers.traefik-dash.entrypoints=http,https"
-      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.{domain:.+}`)"
+      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik{suffix:.?}.{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
     ports:
       - ${KITT_IP}:2222:22
