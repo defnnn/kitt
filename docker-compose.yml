@@ -80,7 +80,7 @@ services:
     command: ["consul","agent","-config-file=/config/dc1.hcl"]
     volumes:
       - "./etc/consul_config:/config"
-      - "./etc/data/consul:/consul/data"
+        #- "./etc/data/consul:/consul/data"
     ports:
       - "169.254.32.1:8500:8500"
       - "169.254.32.1:8502:8502"
