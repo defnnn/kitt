@@ -22,3 +22,9 @@ connect {
 }
 
 enable_central_service_config = true
+
+acl = {
+  enabled = true
+  default_policy = "deny"
+  enable_token_persistence = true
+}
