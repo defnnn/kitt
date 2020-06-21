@@ -4,9 +4,13 @@ services:
   traefik:
     image: "traefik:v2.2.1"
     command:
-      - --providers.docker
-      - --providers.docker.usebindportip=false
+      - --providers.docker=true
       - --providers.docker.exposedbydefault=false
+      - --providers.docker.usebindportip=false
+      - --providers.consulcatalog=true
+      - --providers.consulcatalog.exposedbydefault=false
+      - --providers.consulcatalog.endpoint.address=169.254.32.1:8500
+      - --providers.consulcatalog.endpoint.datacenter=dc1
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
@@ -32,6 +36,8 @@ services:
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
       - "./etc:/etc/traefik"
+    depends_on:
+      - consul
   traefik-proxy:
     image: letfn/consul-envoy:v1.8.0-v0.14.1
     environment:
