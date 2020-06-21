@@ -36,10 +36,13 @@ os-Linux-down:
     bash -c "ip addr del $(KITT_IP)/32 dev dummy0"
 
 os-Darwin-check:
-	if ! "$(shell ifconfig lo0 | grep "inet $KITT_IP netmask")"; then make os-$(shell uname -s)-up; fi
+	for ip in $(KITT_IP) $(KITT_IP)0; do if ! ifconfig lo0 | grep "inet $$ip netmask"; then make os-$(shell uname -s)-up; fi; done
 
 os-Darwin-up:
-	for ip in $(KITT_IP); do sudo ifconfig lo0 alias "$$ip" netmask 255.255.255.255; done
+	for ip in $(KITT_IP) $(KITT_IP)0; do sudo ifconfig lo0 alias "$$ip" netmask 255.255.255.255; done
 
 os-Darwin-down:
-	for ip in $(KITT_IP); do sudo ifconfig lo0 -alias "$$ip" netmask 255.255.255.255; done
+	for ip in $(KITT_IP) $(KITT_IP)0; do sudo ifconfig lo0 -alias "$$ip" netmask 255.255.255.255; done
+
+consul-host:
+	consul agent -config-file="$(PWD)/etc/consul_config/dc0.hcl"
