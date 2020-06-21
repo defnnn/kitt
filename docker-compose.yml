@@ -58,7 +58,7 @@ services:
       - ${HOME}/.cloudflared:/etc/cloudflared
     environment:
       - TUNNEL_URL=https://traefik.kitt.run
-      - TUNNEL_HOSTNAME=traefik.defn.sh
+      - TUNNEL_HOSTNAME=${KITT_ARGO_TUNNEL}
     depends_on:
       - consul
   zerotier:
