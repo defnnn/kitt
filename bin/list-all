@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+__dir="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+__org_repo="$(basename "$(dirname "${__dir}")")"
+REPO="${__org_repo#*--}"
+
+exec defn-asdf-plugin list-all defn "${REPO}" "$@"
