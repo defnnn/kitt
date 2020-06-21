@@ -43,6 +43,7 @@ services:
     environment:
       CONSUL_HTTP_ADDR: 169.254.32.1:8500
       CONSUL_GRPC_ADDR: 169.254.32.1:8502
+      CONSUL_HTTP_TOKEN: ${CONSUL_HTTP_TOKEN}
       SERVICE_CONFIG: /config/traefik.hcl
       CENTRAL_CONFIG: /central_config/traefik.hcl
     volumes:
@@ -88,6 +89,7 @@ services:
     environment:
       CONSUL_HTTP_ADDR: 169.254.32.1:8500
       CONSUL_GRPC_ADDR: 169.254.32.1:8502
+      CONSUL_HTTP_TOKEN: ${CONSUL_HTTP_TOKEN}
     command: [
       "consul",
       "connect", "envoy",
