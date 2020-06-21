@@ -3,6 +3,12 @@ service {
   id = "traefik"
   address = "YYYY"
   port = 80
+
+  checks {
+    name = "Traefik port TCP connect"
+    tcp = "YYYY:80"
+    interval = "10s"
+  }
   
   connect { 
     sidecar_service {
