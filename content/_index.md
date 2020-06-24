@@ -32,7 +32,7 @@ Specify the versions of each kitt project in `$HOME/.tool-versions` which is use
 defn--asdf-plugin defn1
 shflags defn7
 sub defn7
-kitt defn7
+kitt defn8
 kiki defn7
 ```
 
