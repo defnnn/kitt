@@ -37,6 +37,18 @@ services:
       - "./etc:/etc/traefik"
     depends_on:
       - consul
+    ports:
+      - ${KITT_IP}:80:80
+      - ${KITT_IP}:443:443
+    labels:
+      - "id=traefik"
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-api.entrypoints=http,https"
+      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik{domain:.+}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik-api.service=api@internal"
+      - "traefik.http.routers.traefik-dash.entrypoints=http,https"
+      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik{domain:.+}`)"
+      - "traefik.http.routers.traefik-dash.service=dashboard@internal"
   traefik-proxy:
     image: letfn/consul-envoy:v1.8.0-v0.14.1
     environment:
@@ -50,6 +62,11 @@ services:
       - "./etc/central_config:/central_config"
     command: ["consul", "connect", "envoy","-sidecar-for", "traefik"]
     network_mode: "service:traefik"
+  hera:
+    image: aschzero/hera:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${HOME}/.cloudflared:/certs
   cloudflared:
     image: letfn/cloudflared
     restart: always
@@ -83,6 +100,11 @@ services:
     ports:
       - "169.254.32.1:8500:8500"
       - "169.254.32.1:8502:8502"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.consul.entrypoints=https"
+      - "traefik.http.routers.consul.rule=HostRegexp(`consul.{domain:.+}`)"
+      - "traefik.http.services.consul.loadbalancer.server.port=8500"
   consul-gateway:
     image: letfn/consul-envoy:v1.8.0-v0.14.1
     environment:
@@ -100,3 +122,8 @@ services:
       "-l", "debug"]
     depends_on:
       - consul
+
+networks:
+  default:
+    external:
+      name: kitt

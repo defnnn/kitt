@@ -10,3 +10,5 @@ target/
 
 acme.json
 .env
+
+docker-compose.override.yml
