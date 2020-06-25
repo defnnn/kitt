@@ -76,8 +76,8 @@ services:
     volumes:
       - ${HOME}/.cloudflared:/etc/cloudflared
     environment:
-      - TUNNEL_URL=https://${KITT_ARGO_URL}
-      - TUNNEL_HOSTNAME=${KITT_ARGO_TUNNEL}
+      - TUNNEL_URL=https://${KITT_TUNNEL_URL}
+      - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
     depends_on:
       - consul
   zerotier:
