@@ -1,0 +1,9 @@
+version: '3.7'
+
+services:
+  traefik:
+    labels:
+      - "traefik.http.routers.domains.tls=true"
+      - "traefik.http.routers.domains.tls.certresolver=le"
+      - "traefik.http.routers.domains.tls.domains[0].main=your.domain"
+      - "traefik.http.routers.domains.tls.domains[0].sans=*.your.domain"
