@@ -104,10 +104,11 @@ services:
       "-config-file=/config/dc1.hcl"]
     volumes:
       - "./etc/consul_config:/config"
-      - "./etc/consul_data:/consul/data"
+      - "./etc/consul_dc1:/consul/data"
     ports:
       - "169.254.32.1:8500:8500"
       - "169.254.32.1:8502:8502"
+      - "169.254.32.1:8302:8302"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.consul.entrypoints=https"

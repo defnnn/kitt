@@ -27,7 +27,7 @@ function options {
 function main {
   local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
 
-  exec consul agent -config-file="$shome/etc/consul_config/dc0.hcl" "$@"
+  exec consul agent -config-file="$shome/etc/consul_config/dc0.hcl" -data-dir="$shome/etc/consul_dc0" -join-wan=169.254.32.1 "$@"
 }
 
 source sub "$0" "$@"

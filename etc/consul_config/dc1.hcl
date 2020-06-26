@@ -18,7 +18,7 @@ ports {
 
 connect {
   enabled = true
-  enable_mesh_gateway_wan_federation = true
+  #enable_mesh_gateway_wan_federation = true
 }
 
 enable_central_service_config = true
