@@ -97,9 +97,12 @@ services:
     privileged: true
   consul:
     image: consul:1.8.0
-    command: ["consul","agent","-config-file=/config/dc1.hcl"]
+    command: [
+      "consul","agent",
+      "-config-file=/config/dc1.hcl"]
     volumes:
       - "./etc/consul_config:/config"
+      - "./etc/consul_data:/consul/data"
     ports:
       - "169.254.32.1:8500:8500"
       - "169.254.32.1:8502:8502"
@@ -115,8 +118,7 @@ services:
       CONSUL_GRPC_ADDR: 169.254.32.1:8502
       CONSUL_HTTP_TOKEN: ${CONSUL_HTTP_TOKEN}
     command: [
-      "consul",
-      "connect", "envoy",
+      "consul", "connect", "envoy",
       "-mesh-gateway",
       "-register",
       "-address", "{{GetInterfaceIP \"eth0\"}}",

@@ -1,4 +1,4 @@
-data_dir = "/tmp/"
+data_dir = "/consul/data/"
 log_level = "DEBUG"
 
 datacenter = "dc1"
