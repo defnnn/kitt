@@ -97,6 +97,7 @@ services:
     privileged: true
   consul:
     image: consul:1.8.0
+    hostname: kitt-consul
     environment:
       - CONSUL_HTTP_TOKEN
     command: [
@@ -108,6 +109,7 @@ services:
     ports:
       - "169.254.32.1:8500:8500"
       - "169.254.32.1:8502:8502"
+      - "169.254.32.1:8300:8300"
       - "169.254.32.1:8302:8302"
     labels:
       - "traefik.enable=true"
