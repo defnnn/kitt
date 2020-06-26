@@ -25,11 +25,8 @@ function options {
 }
 
 function main {
-  if [[ -f .env ]]; then
-    source .env
-    export CONSUL_HTTP_TOKEN
-  fi
-  env CONSUL_HTTP_ADDR=http://consul.kitt.run:8500 consul "$@"
+  local ip_consul="$(docker-compose exec consul ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1)"
+  exec docker-compose exec consul env CONSUL_HTTP_ADDR="http://${ip_consul}:8500" consul "$@"
 }
 
 source sub "$0" "$@"
