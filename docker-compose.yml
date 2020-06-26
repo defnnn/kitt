@@ -55,11 +55,11 @@ services:
   traefik-proxy:
     image: letfn/consul-envoy:v1.8.0-v0.14.1
     environment:
-      CONSUL_HTTP_ADDR: 169.254.32.1:8500
-      CONSUL_GRPC_ADDR: 169.254.32.1:8502
-      CONSUL_HTTP_TOKEN: ${CONSUL_HTTP_TOKEN}
-      SERVICE_CONFIG: /config/traefik.hcl
-      CENTRAL_CONFIG: /central_config/traefik.hcl
+      - SERVICE_CONFIG=/config/traefik.hcl
+      - CENTRAL_CONFIG=/central_config/traefik.hcl
+      - CONSUL_HTTP_ADDR=169.254.32.1:8500
+      - CONSUL_GRPC_ADDR=169.254.32.1:8502
+      - CONSUL_HTTP_TOKEN
     volumes:
       - "./etc/service_config:/config"
       - "./etc/central_config:/central_config"
@@ -97,6 +97,8 @@ services:
     privileged: true
   consul:
     image: consul:1.8.0
+    environment:
+      - CONSUL_HTTP_TOKEN
     command: [
       "consul","agent",
       "-config-file=/config/dc1.hcl"]
@@ -114,9 +116,9 @@ services:
   consul-gateway:
     image: letfn/consul-envoy:v1.8.0-v0.14.1
     environment:
-      CONSUL_HTTP_ADDR: 169.254.32.1:8500
-      CONSUL_GRPC_ADDR: 169.254.32.1:8502
-      CONSUL_HTTP_TOKEN: ${CONSUL_HTTP_TOKEN}
+      - CONSUL_HTTP_ADDR=169.254.32.1:8500
+      - CONSUL_GRPC_ADDR=169.254.32.1:8502
+      - CONSUL_HTTP_TOKEN
     command: [
       "consul", "connect", "envoy",
       "-mesh-gateway",
