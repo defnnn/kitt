@@ -19,9 +19,12 @@ services:
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
       - --entrypoints.http.http.redirections.entryPoint.scheme=https
+      - --certificatesResolvers.le.acme.dnschallenge=true
       - --certificatesResolvers.le.acme.dnsChallenge.provider=cloudflare
       - --certificatesResolvers.le.acme.email=${CF_API_EMAIL}
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
+      - --certificatesResolvers.le.acme.dnschallenge.delaybeforecheck=0
+      - --certificatesResolvers.le.acme.dnschallenge.resolvers=1.1.1.1
       - --entrypoints.https.address=:443
       - --entrypoints.https.proxyprotocol.insecure
       - --entrypoints.https.http.tls.certResolver=le
@@ -73,8 +76,8 @@ services:
     volumes:
       - ${HOME}/.cloudflared:/etc/cloudflared
     environment:
-      - TUNNEL_URL=https://traefik.kitt.run
-      - TUNNEL_HOSTNAME=${KITT_ARGO_TUNNEL}
+      - TUNNEL_URL=https://${KITT_TUNNEL_URL}
+      - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
     depends_on:
       - consul
   zerotier:
