@@ -25,7 +25,11 @@ function options {
 }
 
 function main {
-  env CONSUL_HTTP_ADDR=http://kitt-consul.kitt.run:8500 consul "$@"
+  if [[ -f .env ]]; then
+    source .env
+    export CONSUL_HTTP_TOKEN
+  fi
+  env CONSUL_HTTP_ADDR=http://consul.kitt.run:8500 consul "$@"
 }
 
 source sub "$0" "$@"

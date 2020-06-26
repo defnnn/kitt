@@ -27,6 +27,8 @@ KITT_HOST_IP=169.254.32.10
 KITT_DOCKER_NETWORK=172.31.188.0/24
 
 function main {
+  local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+
   setup-cert
 
   if [[ "$(docker network inspect kitt | jq -r 'map(select(.Name == "kitt")) | length')" == 0 ]]; then
@@ -37,8 +39,8 @@ function main {
 }
 
 function setup-cert {
-  if ! test -f "$shome/etc/traefik/acme.json"; then
-    cp -v "$shome/etc/traefik/acme.json.kittl.run" "$shome/etc/traefik/acme.json"
+  if ! test -f "$shome/etc/traefik/acme/acme.json"; then
+    cp -v "$shome/etc/traefik/acme/acme.json.kitt.run" "$shome/etc/traefik/acme/acme.json"
   fi
 }
 
