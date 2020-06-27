@@ -15,5 +15,5 @@ drone-test: # Run tests with drone specific setup
 	cd /tmp/src/test && $(MAKE)
 	cd /tmp/src/test && git diff
 
-once:
+setup once:
 	exec/kitt-setup

@@ -53,7 +53,7 @@ services:
       - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
   traefik-proxy:
-    image: letfn/consul-envoy:v1.8.0-v0.14.1
+    image: letfn/consul-envoy:v1.8.0-v1.14.2
     environment:
       - SERVICE_CONFIG=/config/traefik.hcl
       - CENTRAL_CONFIG=/central_config/traefik.hcl
@@ -118,17 +118,19 @@ services:
       - "traefik.http.routers.consul.rule=HostRegexp(`consul.{domain:.+}`)"
       - "traefik.http.services.consul.loadbalancer.server.port=8500"
   consul-gateway:
-    image: letfn/consul-envoy:v1.8.0-v0.14.1
+    image: letfn/consul-envoy:v1.8.0-v1.14.2
     environment:
       - CONSUL_HTTP_ADDR=169.254.32.1:8500
       - CONSUL_GRPC_ADDR=169.254.32.1:8502
       - CONSUL_HTTP_TOKEN
+    ports:
+      - 169.254.32.1:4444:443
     command: [
       "consul", "connect", "envoy",
       "-mesh-gateway",
       "-register",
       "-address", "{{GetInterfaceIP \"eth0\"}}",
-      "-wan-address", "{{GetInterfaceIP \"eth0\"}}:443",
+      "-wan-address", "169.254.32.1:4444",
       "--",
       "-l", "debug"]
     depends_on:
