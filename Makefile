@@ -19,13 +19,13 @@ setup once:
 	exec/kitt-setup
 
 dc0:
-	exec/kitt-consul-run
+	consul agent -config-file="$(PWD)/etc/consul_config/dc0.hcl" -data-dir="$(PWD)/etc/consul_dc0" -join-wan=169.254.32.1
 
 dc0-gateway:
-	. .env; export CONSUL_HTTP_TOKEN; env CONSUL_HTTP_ADDR=169.254.32.0:8500 CONSUL_GRPC_ADDR=169.254.32.0:8502 consul connect envoy -mesh-gateway -register -address 169.254.32.0:4444
+	set -a; . .env; set +a; exec/kitt-dc0 connect envoy -mesh-gateway -register -address 169.254.32.0:4444
 
 dc0-proxy:
-	. .env; export CONSUL_HTTP_TOKEN; env CONSUL_HTTP_ADDR=169.254.32.0:8500 CONSUL_GRPC_ADDR=169.254.32.0:8502 consul connect envoy -sidecar-for dc0 -admin-bind 127.0.0.1:19002
+	set -a; . .env; set +a; exec/kitt-dc0 connect envoy -sidecar-for dc0 -admin-bind 127.0.0.1:19001
 
 dc0-test:
 	@curl http://localhost:9091
