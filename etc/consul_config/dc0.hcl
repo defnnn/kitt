@@ -8,8 +8,8 @@ server = true
 bootstrap_expect = 1
 ui = true
 
-bind_addr = "169.254.32.10"
-client_addr = "169.254.32.10"
+bind_addr = "169.254.32.0"
+client_addr = "169.254.32.0"
 
 ports {
   grpc = 8502
