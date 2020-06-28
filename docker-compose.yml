@@ -79,6 +79,7 @@ services:
       - TUNNEL_URL=https://${KITT_TUNNEL_URL}
       - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
     depends_on:
+      - traefik
       - consul
   zerotier:
     image: letfn/zerotier
