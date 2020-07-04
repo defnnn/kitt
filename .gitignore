@@ -10,7 +10,8 @@ target/
 
 acme.json
 .env
+etc/data
 
 docker-compose.override.yml
-
+pyinfra-debug.log
 backup
