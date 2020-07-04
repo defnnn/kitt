@@ -1,0 +1,7 @@
+ #!/bin/sh
+
+ function main {
+  exec vault server -config=/config/vault/vault.hcl
+ }
+
+ main "$@"
