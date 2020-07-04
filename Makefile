@@ -16,12 +16,16 @@ drone-test: # Run tests with drone specific setup
 	cd /tmp/src/test && git diff
 
 setup once:
-	if ! test -f config/vault/vault.hcl; then ln -nfs vault-consul config/vault; fi
+	if ! test -f etc/vault/vault/vault.hcl; then ln -nfs vault-consul etc/vault/vault; fi
 	if ! test -d backup/.; then mkdir backup || true; fi
 	exec/kitt-setup
 	kitt recreate
 	$(MAKE) unseal
 	$(MAKE) wait
+
+teardown:
+	$(MAKE) seal
+	kitt down
 
 dc0:
 	consul agent -config-file="$(PWD)/etc/consul_config/dc0.hcl" -data-dir="$(PWD)/etc/consul_dc0" -join-wan=169.254.32.1
@@ -35,25 +39,15 @@ dc0-proxy:
 dc0-test:
 	@curl http://localhost:9091
 
-migrate-ddb migrate-s3:
+migrate-ddb migrate-s3 backup:
 	$(MAKE) seal
-	vault operator migrate -config config/$@.hcl
-	$(MAKE) restart
+	vault operator migrate -config etc/vault/vault/$@.hcl
+	$(MAKE) restart-vault
 	$(MAKE) wait
 
-backup:
-	$(MAKE) seal
-	vault operator migrate -config config/vault/backup.hcl
-	$(MAKE) restart
-	$(MAKE) wait
-
-restart:
-	kitt restart
+restart-vault:
+	kitt restart vault
 	$(MAKE) unseal
-
-teardown:
-	$(MAKE) clean
-	kitt down
 
 wait:
 	@set -x; while true; do if [[ "$$(vault status -format json | jq -r '.sealed')" == "false" ]]; then break; fi; date; sleep 1; done
@@ -72,9 +66,7 @@ init:
 unseal:
 	@pyinfra @local scripts/unseal.py
 
-clean:
-	$(MAKE) seal
-
 consul ddb s3 file-consul file-ddb file-s3 file:
-	ln -nfs vault-$@ config/vault
-	$(MAKE) setup
+	ln -nfs vault-$@ etc/vault/vault
+	$(MAKE) restart-vault
+	$(MAKE) wait
