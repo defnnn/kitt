@@ -1,6 +1,6 @@
 SHELL := /bin/bash
 
-.PHONY: test backup
+.PHONY: test
 
 menu:
 	@perl -ne 'printf("%10s: %s\n","$$1","$$2") if m{^([\w+-]+):[^#]+#\s(.+)$$}' Makefile
@@ -39,11 +39,8 @@ dc0-proxy:
 dc0-test:
 	@curl http://localhost:9091
 
-migrate-ddb migrate-s3 backup:
-	$(MAKE) seal
-	vault operator migrate -config etc/vault/vault/$@.hcl
-	$(MAKE) restart-vault
-	$(MAKE) wait
+backup-consul:
+	exec/kitt-dc1 snapshot save backup/consul/consul-$(shell date +%s)
 
 restart-vault:
 	kitt restart vault
