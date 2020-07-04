@@ -16,7 +16,6 @@ drone-test: # Run tests with drone specific setup
 	cd /tmp/src/test && git diff
 
 setup once:
-	if ! test -f etc/vault/vault/vault.hcl; then ln -nfs vault-consul etc/vault/vault; fi
 	if ! test -d backup/.; then mkdir backup || true; fi
 	exec/kitt-setup
 	kitt recreate
@@ -62,8 +61,3 @@ init:
 
 unseal:
 	@pyinfra @local scripts/unseal.py
-
-consul ddb s3 file-consul file-ddb file-s3 file:
-	ln -nfs vault-$@ etc/vault/vault
-	$(MAKE) restart-vault
-	$(MAKE) wait

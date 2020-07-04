@@ -151,7 +151,6 @@ services:
       - AWS_SECURITY_TOKEN
       - AWS_SESSION_TOKEN
     volumes:
-      - ./backup:/vault
       - ./etc/vault:/config
       - ./vault-service:/service
     ports:
