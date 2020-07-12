@@ -34,7 +34,7 @@ function main {
   local ip_consul="169.254.32.${0##*-dc}"
 
   export CONSUL_HTTP_ADDR="http://${ip_consul}:8500"
-  export CONSUL_GRPC_ADDR=169.254.32.0:8502
+  export CONSUL_GRPC_ADDR="http://${ip_consul}:8502"
 
   env CONSUL_HTTP_ADDR="${CONSUL_HTTP_ADDR}" CONSUL_GRPC_ADDR="${CONSUL_GRPC_ADDR}" \
     consul "$@"
