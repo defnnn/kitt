@@ -55,6 +55,9 @@ seal:
 	$(MAKE) root-login
 	vault operator seal
 
+env:
+	@pyinfra @local scripts/env.py
+
 init:
 	@pyinfra @local scripts/init.py
 	$(MAKE) unseal
