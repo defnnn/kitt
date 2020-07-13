@@ -19,8 +19,6 @@ setup once:
 	if ! test -d backup/.; then mkdir backup || true; fi
 	exec/kitt-setup
 	kitt recreate
-	$(MAKE) unseal
-	$(MAKE) wait
 
 teardown:
 	$(MAKE) seal
