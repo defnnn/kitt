@@ -19,6 +19,9 @@ setup once:
 	if ! test -d backup/.; then mkdir backup || true; fi
 	exec/kitt-setup
 	kitt recreate
+	$(MAKE) wait-vault-ready
+	$(MAKE) unseal
+	$(MAKE) wait-vault-unseal
 
 teardown:
 	$(MAKE) seal
@@ -43,8 +46,11 @@ restart-vault:
 	kitt restart vault
 	$(MAKE) unseal
 
-wait:
+wait-vault-unseal:
 	@set -x; while true; do if [[ "$$(vault status -format json | jq -r '.sealed')" == "false" ]]; then break; fi; date; sleep 1; done
+
+wait-vault-ready:
+	@set -x; while true; do if curl -sS https://vault.kitt.run | grep /ui/; then break; fi; date; sleep 1; done
 
 root-login:
 	@vault login "$(shell pass moria/root-token)" >/dev/null
