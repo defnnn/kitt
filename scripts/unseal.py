@@ -12,7 +12,7 @@ SHELL = '/usr/bin/env bash'
 # curl --request PUT --data '{"key": "abcd1234..."}' https://vault.$KITT_DOMAIN/v1/sys/unseal
 def unseal():
     print('Unseal Moria')
-    url = "vault.{}".format(os.getenv("KITT_DOMAIN", "kitt.run"))
+    url = "vault.{}".format(os.getenv("KITT_DOMAIN"))
     for index in range(1, 4):
         key = local.shell(f'pass moria/keys_{index} | base64 -d')
         try:

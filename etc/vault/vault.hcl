@@ -1,8 +1,8 @@
 ui = true
 
 storage "consul" {
-  address = "consul.kitt.run:443"
-  scheme  = "https"
+  address = "consul:8500"
+  scheme  = "http"
   path    = "vault"
 
   disable_registration = "true"

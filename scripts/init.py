@@ -14,7 +14,7 @@ def initialize():
     mStatus = status()
     init = {}
 
-    url = "vault.{}".format(os.getenv("KITT_DOMAIN", "kitt.run"))
+    url = "vault.{}".format(os.getenv("KITT_DOMAIN"))
     if "initialized" in mStatus and not mStatus["initialized"]:
         print('Initialize Moria')
         try:

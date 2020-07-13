@@ -50,7 +50,7 @@ wait-vault-unseal:
 	@set -x; while true; do if [[ "$$(vault status -format json | jq -r '.sealed')" == "false" ]]; then break; fi; date; sleep 1; done
 
 wait-vault-ready:
-	@set -x; while true; do if curl -sS https://vault.$${KITT_DOMAIN:-kitt.run} | grep /ui/; then break; fi; date; sleep 1; done
+	@set -x; while true; do if curl -sS https://vault.$(KITT_DOMAIN) | grep /ui/; then break; fi; date; sleep 1; done
 
 root-login:
 	@vault login "$(shell pass moria/root-token)" >/dev/null
