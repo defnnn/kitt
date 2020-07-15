@@ -15,6 +15,7 @@ services:
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
+      - --entrypoints.ssh.address=:22
       - --entrypoints.http.address=:80
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -41,6 +42,7 @@ services:
     depends_on:
       - consul
     ports:
+      - ${KITT_IP}:22:22
       - ${KITT_IP}:80:80
       - ${KITT_IP}:443:443
     labels:
