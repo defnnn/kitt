@@ -3,8 +3,6 @@ layout: blog
 category: blog
 published: false
 title: Untitled
-tags:
-  - mangos
 ---
 ## Install asdf-vm
 

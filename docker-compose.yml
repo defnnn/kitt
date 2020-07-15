@@ -157,7 +157,6 @@ services:
       - ./vault-service:/service
     ports:
       - 169.254.32.1:8200:8200
-      - 169.254.32.1:8500:8500
     cap_add:
       - IPC_LOCK
     labels:
