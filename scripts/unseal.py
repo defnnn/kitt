@@ -14,9 +14,9 @@ def unseal():
     print('Unseal Moria')
     url = "vault.{}".format(os.getenv("KITT_DOMAIN"))
     for index in range(1, 4):
-        key = local.shell(f'pass moria/keys_{index} | base64 -d')
+        key = local.shell(f'pass moria/keys_{index}')
         try:
-            req = requests.put(f'https://{url}/v1/sys/unseal', data = f'{key}')
+            req = requests.put(f'https://{url}/v1/sys/unseal', data = '{{"key": "{}"}}'.format(key))
             req.raise_for_status()
         except requests.exceptions.RequestException as e:
             raise SystemExit(e)
