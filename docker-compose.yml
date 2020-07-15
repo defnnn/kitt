@@ -15,6 +15,7 @@ services:
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
+      - --entrypoints.ssh.address=:22
       - --entrypoints.http.address=:80
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -41,6 +42,7 @@ services:
     depends_on:
       - consul
     ports:
+      - ${KITT_IP}:22:22
       - ${KITT_IP}:80:80
       - ${KITT_IP}:443:443
     labels:
@@ -136,6 +138,50 @@ services:
       "-l", "debug"]
     depends_on:
       - consul
+  vault:
+    image: vault:1.4.3
+    hostname: "vault"
+    restart: on-failure
+    command: [ "sh", "/service" ]
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+      - VAULT_LOG_LEVEL=debug
+      - AWS_DEFAULT_REGION
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SECURITY_TOKEN
+      - AWS_SESSION_TOKEN
+    volumes:
+      - ./etc/vault:/config
+      - ./vault-service:/service
+    ports:
+      - 169.254.32.1:8200:8200
+      - 169.254.32.1:8500:8500
+    cap_add:
+      - IPC_LOCK
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vault.entrypoints=https"
+      - "traefik.http.routers.vault.rule=HostRegexp(`vault.{domain:.+}`)"
+      - "traefik.http.services.vault.loadbalancer.server.port=8200"
+    links:
+      - consul
+    depends_on:
+      - consul
+      - traefik
+  vault-proxy:
+    image: letfn/consul-envoy:v1.8.0-v1.14.2
+    environment:
+      CONSUL_HTTP_ADDR: 169.254.32.1:8500
+      CONSUL_GRPC_ADDR: 169.254.32.1:8502
+      SERVICE_CONFIG: /config/vault.hcl
+      CENTRAL_CONFIG: /central_config/vault.hcl
+    volumes:
+      - "./etc/service_config:/config"
+      - "./etc/central_config:/central_config"
+    command: ["consul", "connect", "envoy","-sidecar-for", "vault"]
+    network_mode: "service:vault"
 
 networks:
   default:
