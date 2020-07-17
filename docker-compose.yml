@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   traefik:
-    image: "traefik:v2.2.1"
+    image: "traefik:v2.2.5"
     command:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
@@ -23,7 +23,7 @@ services:
       - --certificatesResolvers.le.acme.dnschallenge=true
       - --certificatesResolvers.le.acme.dnsChallenge.provider=cloudflare
       - --certificatesResolvers.le.acme.email=${CF_API_EMAIL}
-      - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
+      - --certificatesResolvers.le.acme.storage=${KITT_ACME_STORAGE:-/etc/traefik/acme/acme.json}
       - --certificatesResolvers.le.acme.dnschallenge.delaybeforecheck=0
       - --certificatesResolvers.le.acme.dnschallenge.resolvers=1.1.1.1
       - --entrypoints.https.address=:443
@@ -54,6 +54,10 @@ services:
       - "traefik.http.routers.traefik-dash.entrypoints=http,https"
       - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
+      - "traefik.http.routers.domains.tls=true"
+      - "traefik.http.routers.domains.tls.certresolver=le"
+      - "traefik.http.routers.domains.tls.domains[0].main=traefik-kitt.${KITT_DOMAIN}"
+      - "traefik.http.routers.domains.tls.domains[0].sans=vault.${KITT_DOMAIN},consul.${KITT_DOMAIN}"
   traefik-proxy:
     image: letfn/consul-envoy:v1.8.0-v1.14.2
     environment:
