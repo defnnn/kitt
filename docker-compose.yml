@@ -16,6 +16,7 @@ services:
       - --log.level=DEBUG
       - --accesslog=true
       - --entrypoints.ssh.address=:2222
+      - --entrypoints.openvpn.address=:1194
       - --entrypoints.http.address=:80
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -43,6 +44,7 @@ services:
       - consul
     ports:
       - ${KITT_IP}:2222:2222
+      - ${KITT_IP}:1194:1194
       - ${KITT_IP}:80:80
       - ${KITT_IP}:443:443
     labels:
