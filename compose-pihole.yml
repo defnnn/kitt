@@ -8,7 +8,6 @@ services:
       - 1.0.0.1
     volumes:
       - ./etc/pihole:/etc/pihole
-      - ./etc/pihole/service:/service
     environment:
       - WEBPASSWORD=mehmehmeh
     depends_on:
