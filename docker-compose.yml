@@ -130,7 +130,7 @@ services:
     depends_on:
       - consul
   vault:
-    image: vault:1.4.3
+    image: vault:1.5.0
     hostname: "vault"
     restart: on-failure
     command: [ "sh", "/service" ]
