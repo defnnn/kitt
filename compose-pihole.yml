@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  pihole:
+    image: letfn/pihole
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    volumes:
+      - ./etc/pihole:/etc/pihole
+    environment:
+      - WEBPASSWORD=mehmehmeh
+    depends_on:
+      - unbound
+    links:
+      - unbound
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pihole.rule=Host(`pihole.${KITT_DOMAIN}`)"
+      - "traefik.http.services.pihole.loadbalancer.server.port=80"
+  unbound:
+    image: markbnj/unbound-docker:0.1.0
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    volumes:
+      - ./etc/unbound:/etc/unbound
+      - ./var/unbound:/var/lib/unbound
+
+networks:
+  default:
+    external:
+      name: kitt

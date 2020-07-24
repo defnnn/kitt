@@ -16,6 +16,7 @@ services:
       - --log.level=DEBUG
       - --accesslog=true
       - --entrypoints.ssh.address=:2222
+      - --entrypoints.openvpn.address=:1194
       - --entrypoints.http.address=:80
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -43,6 +44,7 @@ services:
       - consul
     ports:
       - ${KITT_IP}:2222:2222
+      - ${KITT_IP}:1194:1194
       - ${KITT_IP}:80:80
       - ${KITT_IP}:443:443
     labels:
@@ -87,21 +89,6 @@ services:
     depends_on:
       - traefik
       - consul
-  zerotier:
-    image: letfn/zerotier
-    restart: always
-    volumes:
-      - ./etc/zerotier/zerotier-one:/var/lib/zerotier-one
-      - ./etc/zerotier/config:/data/config
-    cap_drop:
-      - NET_RAW
-      - NET_ADMIN
-      - SYS_ADMIN
-    devices:
-      - /dev/net/tun
-    links:
-      - traefik
-    privileged: true
   consul:
     image: consul:1.8.0
     hostname: kitt-consul
