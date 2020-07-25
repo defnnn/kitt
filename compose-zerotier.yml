@@ -4,6 +4,7 @@ services:
   zerotier:
     image: letfn/zerotier
     restart: always
+    env_file: .env
     volumes:
       - ./etc/zerotier/zerotier-one:/var/lib/zerotier-one
       - ./etc/zerotier/config:/data/config
