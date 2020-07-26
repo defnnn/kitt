@@ -14,9 +14,6 @@ services:
       - unbound
     links:
       - unbound
-    ports:
-      - ${KITT_IP}:53:53/tcp
-      - ${KITT_IP}:53:53/udp
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.pihole.rule=Host(`pihole.${KITT_DOMAIN}`)"
