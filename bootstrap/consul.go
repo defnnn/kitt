@@ -9,17 +9,16 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	//"strconv"
 	"strings"
 	"time"
 )
 
-// need to establish kitt directory
-
-func dotenv() map[string]string {
+func dotenv(dir string) map[string]string {
 	var envs = make(map[string]string)
 
-	if _, err := os.Stat(".env"); err == nil {
-		file, err := os.Open(".env")
+	if _, err := os.Stat(fmt.Sprintf("%s/.env", dir)); err == nil {
+		file, err := os.Open(fmt.Sprintf("%s/.env", dir))
 		if err != nil {
 			fmt.Println("Error: .env ", err)
 			os.Exit(1)
@@ -84,41 +83,39 @@ func pass(path string) map[string]string {
 	return pass
 }
 
-func myenv(path string) []string {
-	var env []string
-
+func myenv(path string, dir string, env string) string {
+	var out string
 	pass := pass(path)
-	fmt.Printf("%v", pass)
+	dotenv := dotenv(dir)
 
-	//dotenv := dotenv()
-	//fmt.Printf("%v", dotenv)
-
-	val, present := os.LookupEnv("HOME")
+	if val, ok := pass[env]; ok {
+		out = fmt.Sprintf("%s=%s", env, val)
+		return out
+	}
+	if val, ok := dotenv[env]; ok {
+		out = fmt.Sprintf("%s=%s", env, val)
+		return out
+	}
+	val, present := os.LookupEnv(env)
 	if present {
-		env = append([]string{"HOME=" + val}, env...)
+		out = fmt.Sprintf("%s=%s", env, val)
+		return out
 	} else {
-		fmt.Println("Error: variable $HOME not set")
+		fmt.Println("Error: variable " + env + " not set")
 		os.Exit(1)
 	}
 
-	val, present = os.LookupEnv("KITT_DOMAIN")
-	if present {
-		env = append([]string{"KITT_DOMAIN=" + val}, env...)
-	} else {
-		fmt.Println("Error: variable $KITT_DOMAIN not set")
-		os.Exit(1)
-	}
-
-	return env
+	return ""
 }
 
-func cli(path string, args []string, envs []string, in io.Reader) (error, string) {
+func cli(path string, args []string, envs []string, dir string, in io.Reader) (error, string) {
 	cli := append([]string{path}, args...)
 
 	cmd := &exec.Cmd{
 		Path:   path,
 		Args:   cli,
 		Env:    envs,
+		Dir:    dir,
 		Stdin:  in,
 		Stdout: os.Stdout,
 		Stderr: os.Stdout,
@@ -136,15 +133,28 @@ func cli(path string, args []string, envs []string, in io.Reader) (error, string
 func main() {
 	var arg []string
 	var env []string
+	var xtrenv []string
+	var dir string
 	var out string
 	in := strings.NewReader("")
 
+
+	// placeholder: until we have packaging solidified,
+	// we'll use an os env var to find kitt's root directory
+        val, present := os.LookupEnv("KITT_DIRECTORY")
+        if present {
+		dir = val
+        } else {
+                fmt.Println("Error: variable KITT_DIRECTORY not set")
+                os.Exit(1)
+        }
+
+	// ensure our os binaries exist and in our $PATH
 	pass, err := exec.LookPath("pass")
 	if err != nil {
 		fmt.Printf("cannot find pass in $PATH: %s\n", err)
 		os.Exit(1)
 	}
-	myenv := myenv(pass)
 
 	compose, err := exec.LookPath("docker-compose")
 	if err != nil {
@@ -158,8 +168,18 @@ func main() {
 		os.Exit(1)
 	}
 
+	home := myenv(pass, dir, "HOME")
+	//email := myenv(pass, dir, "CF_API_EMAIL")
+	//dns := myenv(pass, dir, "CF_DNS_API_TOKEN")
+	//ip, _ := strconv.ParseInt(myenv(pass, dir, "KITT_IP"), 10, 64)
+	domain := myenv(pass, dir, "KITT_DOMAIN")
+	//host := myenv(pass, dir, "KITT_TUNNEL_HOSTNAME")
+	//url := myenv(pass, dir, "KITT_TUNNEL_URL")
+	//xtrenv = append(xtrenv, home, email, dns, ip, domain, host, url)
+	xtrenv = append(xtrenv, home, domain)
+
 	arg = []string{"up", "-d", "consul"}
-	err, out = cli(compose, arg, myenv, in)
+	err, out = cli(compose, arg, xtrenv, dir, in)
 	if err != nil {
 		fmt.Println(out+" Error: ", err)
 		os.Exit(1)
@@ -177,13 +197,13 @@ func main() {
 		os.Stdout = w
 	}
 	arg = []string{"info"}
-	env = append(myenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
-	err, out = cli(consul, arg, env, in)
+	env = append(xtrenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
+	err, out = cli(consul, arg, env, dir, in)
 	for err != nil {
 		time.Sleep(5 * time.Second)
 		arg = []string{"info"}
-		env = append(myenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
-		err, out = cli(consul, arg, env, in)
+		env = append(xtrenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
+		err, out = cli(consul, arg, env, dir, in)
 	}
 	w.Close()
 
@@ -197,8 +217,8 @@ func main() {
 		os.Stdout = w
 	}
 	arg = []string{"acl", "bootstrap", "-format=json"}
-	env = append(myenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
-	err, out = cli(consul, arg, env, in)
+	env = append(xtrenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
+	err, out = cli(consul, arg, env, dir, in)
 	if err != nil {
 		fmt.Println(out+" Error: ", err)
 		fmt.Println("looks like consul may already be bootstrapped")
@@ -214,7 +234,7 @@ func main() {
 		secret := acl["SecretID"].(interface{})
 		str := fmt.Sprintf("%v", secret)
 		arg = []string{"insert", "-e", "kitt/CONSUL_HTTP_TOKEN"}
-		err, out = cli(pass, arg, myenv, strings.NewReader(str))
+		err, out = cli(pass, arg, xtrenv, dir, strings.NewReader(str))
 		if err != nil {
 			fmt.Println(out+" Error: ", err)
 			fmt.Println("unable to insert consul secret id acl token into pass")
@@ -222,18 +242,18 @@ func main() {
 			fmt.Println("echo " + str + " | pass insert -e kitt/CONSUL_HTTP_TOKEN")
 		} else {
 			arg = []string{"git", "push"}
-			err, out = cli(pass, arg, myenv, in)
+			err, out = cli(pass, arg, xtrenv, dir, in)
 			if err != nil {
 				fmt.Println(out+" Error: ", err)
 				fmt.Println("please manually run: pass git push")
 			}
 		}
 	} else {
-		fmt.Printf("%s", stdout) // print any error message from consul acl bootstrap
+		fmt.Printf("%s", stdout) // print any error message from consul acl bootstrap cmd
 	}
 
 	arg = []string{"down"}
-	err, out = cli(compose, arg, myenv, in)
+	err, out = cli(compose, arg, xtrenv, dir, in)
 	if err != nil {
 		fmt.Println(out+" Error: ", err)
 		os.Exit(1)
