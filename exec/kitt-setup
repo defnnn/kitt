@@ -22,12 +22,13 @@ function options {
   true
 }
 
-KITT_IP=169.254.32.1
 KITT_HOST_IP=169.254.32.0
 KITT_DOCKER_NETWORK=172.31.188.0/24
 
 function main {
   local shome="$(cd -P -- "${BASH_SOURCE%/*}/.." && pwd -P)"
+
+  source "$shome/.env"
 
   if [[ "$(docker network inspect kitt | jq -r 'map(select(.Name == "kitt")) | length')" == 0 ]]; then
     setup-network

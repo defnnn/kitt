@@ -9,7 +9,7 @@ services:
       - --providers.docker.usebindportip=false
       - --providers.consulcatalog=true
       - --providers.consulcatalog.exposedbydefault=false
-      - --providers.consulcatalog.endpoint.address=169.254.32.1:8500
+      - --providers.consulcatalog.endpoint.address=${KITT_IP}:8500
       - --providers.consulcatalog.endpoint.datacenter=dc1
       - --providers.consulcatalog.endpoint.token=${CONSUL_HTTP_TOKEN}
       - --serverstransport.insecureskipverify=true
@@ -68,8 +68,8 @@ services:
     environment:
       - SERVICE_CONFIG=/config/traefik.hcl
       - CENTRAL_CONFIG=/central_config/traefik.hcl
-      - CONSUL_HTTP_ADDR=169.254.32.1:8500
-      - CONSUL_GRPC_ADDR=169.254.32.1:8502
+      - CONSUL_HTTP_ADDR=${KITT_IP}:8500
+      - CONSUL_GRPC_ADDR=${KITT_IP}:8502
       - CONSUL_HTTP_TOKEN
     volumes:
       - "./etc/service_config:/config"
@@ -107,11 +107,11 @@ services:
       - "./etc/consul_config:/config"
       - "./etc/consul_dc1:/consul/data"
     ports:
-      - "169.254.32.1:8500:8500"
-      - "169.254.32.1:8502:8502"
-      - "169.254.32.1:8300:8300"
-      - "169.254.32.1:8302:8302/tcp"
-      - "169.254.32.1:8302:8302/udp"
+      - "${KITT_IP}:8500:8500"
+      - "${KITT_IP}:8502:8502"
+      - "${KITT_IP}:8300:8300"
+      - "${KITT_IP}:8302:8302/tcp"
+      - "${KITT_IP}:8302:8302/udp"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.consul.entrypoints=https"
@@ -120,17 +120,17 @@ services:
   consul-gateway:
     image: letfn/consul-envoy:v1.8.0-v1.14.2
     environment:
-      - CONSUL_HTTP_ADDR=169.254.32.1:8500
-      - CONSUL_GRPC_ADDR=169.254.32.1:8502
+      - CONSUL_HTTP_ADDR=${KITT_IP}:8500
+      - CONSUL_GRPC_ADDR=${KITT_IP}:8502
       - CONSUL_HTTP_TOKEN
     ports:
-      - 169.254.32.1:4444:443
+      - ${KITT_IP}:4444:443
     command: [
       "consul", "connect", "envoy",
       "-mesh-gateway",
       "-register",
       "-address", "{{GetInterfaceIP \"eth0\"}}",
-      "-wan-address", "169.254.32.1:4444",
+      "-wan-address", "${KITT_IP}:4444",
       "--",
       "-l", "debug"]
     depends_on:
@@ -153,7 +153,7 @@ services:
       - ./etc/vault:/config
       - ./vault-service:/service
     ports:
-      - 169.254.32.1:8200:8200
+      - ${KITT_IP}:8200:8200
     cap_add:
       - IPC_LOCK
     labels:
@@ -169,8 +169,8 @@ services:
   vault-proxy:
     image: letfn/consul-envoy:v1.8.0-v1.14.2
     environment:
-      CONSUL_HTTP_ADDR: 169.254.32.1:8500
-      CONSUL_GRPC_ADDR: 169.254.32.1:8502
+      CONSUL_HTTP_ADDR: ${KITT_IP}:8500
+      CONSUL_GRPC_ADDR: ${KITT_IP}:8502
       SERVICE_CONFIG: /config/vault.hcl
       CENTRAL_CONFIG: /central_config/vault.hcl
     volumes:
