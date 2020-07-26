@@ -13,8 +13,8 @@ import (
 	"time"
 )
 
-func dotenv() []string {
-	var text []string
+func dotenv() map[string]string {
+	var envs = make(map[string]string)
 
 	if _, err := os.Stat(".env"); err == nil {
 		file, err := os.Open(".env")
@@ -25,7 +25,14 @@ func dotenv() []string {
 		scanner := bufio.NewScanner(file)
 		scanner.Split(bufio.ScanLines)
 		for scanner.Scan() {
-			text = append(text, scanner.Text())
+			text := strings.Split(scanner.Text(), "=")
+			if len(text) == 2 {
+				envs[text[0]] = text[1]
+			} else {
+				fmt.Println("Error: parsing .env")
+				fmt.Println("please check .env file format")
+			        os.Exit(1)
+			}
 		}
 		file.Close()
 	} else {
@@ -34,7 +41,7 @@ func dotenv() []string {
 		os.Exit(1)
 	}
 
-	return text
+	return envs
 }
 
 func pass() []string {
@@ -66,11 +73,11 @@ func pass() []string {
 func myenv() []string {
 	var env []string
 
-	pass := pass()
-	fmt.Printf("%v", pass)
+	//pass := pass()
+	//fmt.Printf("%v", pass)
 
-	//dotenv := dotenv()
-	//fmt.Printf("%v", dotenv)
+	dotenv := dotenv()
+	fmt.Printf("%v", dotenv)
 
 	val, present := os.LookupEnv("HOME")
 	if present {
