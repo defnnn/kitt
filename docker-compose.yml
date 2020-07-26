@@ -42,6 +42,9 @@ services:
       - "./etc/traefik:/etc/traefik"
     depends_on:
       - consul
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
     ports:
       - ${KITT_IP}:2222:2222
       - ${KITT_IP}:1194:1194
@@ -89,6 +92,9 @@ services:
     depends_on:
       - traefik
       - consul
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
   consul:
     image: consul:1.8.0
     hostname: kitt-consul
