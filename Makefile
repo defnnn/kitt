@@ -61,7 +61,7 @@ daemon.json: fixed-cidr-v6
 	$(MAKE) daemon.json-inner
 
 daemon.json-inner:
-	@jq -n --arg cidr "$(shell cat fixed-cidr-v6)" '{debug: true, experimental: true, "default-address-pools": [{base:"172.31.0.0/16","size":24}], ipv6: true, "fixed-cidr-v6": $$cidr}' > daemon.json.1 && mv daemon.json.1 daemon.json
+	@jq -n --arg cidr "$(shell cat fixed-cidr-v6)" '{debug: true, experimental: true, "default-address-pools": [{base:"172.31.0.0/16","size":24}], ipv6: true, "fixed-cidr-v6": $$cidr}' | jq . > daemon.json.1 && mv daemon.json.1 daemon.json
 	@rm -f fixed-cidr-v6
 	@cat daemon.json
 
