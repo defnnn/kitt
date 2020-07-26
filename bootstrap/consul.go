@@ -46,11 +46,11 @@ func dotenv() map[string]string {
 	return envs
 }
 
-func pass() map[string]string {
+func pass(path string) map[string]string {
 	var pass = make(map[string]string)
 
 	var out bytes.Buffer
-	cmd := exec.Command("pass", "kitt")
+	cmd := exec.Command(path, "kitt")
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
@@ -71,7 +71,7 @@ func pass() map[string]string {
 		three := strings.TrimSpace(two[len(two)-1])
 		// get the value of our pass key
 		var res bytes.Buffer
-		value := exec.Command("pass", fmt.Sprintf("kitt/%s", three))
+		value := exec.Command(path, fmt.Sprintf("kitt/%s", three))
 		value.Stdout = &res
 		err := value.Run()
 		if err != nil {
@@ -84,10 +84,10 @@ func pass() map[string]string {
 	return pass
 }
 
-func myenv() []string {
+func myenv(path string) []string {
 	var env []string
 
-	pass := pass()
+	pass := pass(path)
 	fmt.Printf("%v", pass)
 
 	//dotenv := dotenv()
@@ -138,13 +138,13 @@ func main() {
 	var env []string
 	var out string
 	in := strings.NewReader("")
-	myenv := myenv()
 
 	pass, err := exec.LookPath("pass")
 	if err != nil {
 		fmt.Printf("cannot find pass in $PATH: %s\n", err)
 		os.Exit(1)
 	}
+	myenv := myenv(pass)
 
 	compose, err := exec.LookPath("docker-compose")
 	if err != nil {
