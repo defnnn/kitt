@@ -73,7 +73,7 @@ func pass(path string) map[string]string {
 			fmt.Println("Error: pass kitt/"+three, err)
 			os.Exit(1)
 		}
-		pass[three] = res.String()
+		pass[three] = strings.TrimSpace(res.String())
 	}
 
 	return pass
@@ -178,7 +178,6 @@ func main() {
 	host := myenv(pass, dir, "KITT_TUNNEL_HOSTNAME", false)
 	url := myenv(pass, dir, "KITT_TUNNEL_URL", false)
 	xtrenv = append(xtrenv, home, email, api, dns, http, ip, domain, host, url)
-	fmt.Println(xtrenv)
 
 	arg = []string{"up", "-d", "consul"}
 	err, out = cli(compose, arg, xtrenv, dir, in)
