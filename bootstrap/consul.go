@@ -13,6 +13,8 @@ import (
 	"time"
 )
 
+// need to establish kitt directory
+
 func dotenv() map[string]string {
 	var envs = make(map[string]string)
 
@@ -31,7 +33,7 @@ func dotenv() map[string]string {
 			} else {
 				fmt.Println("Error: parsing .env")
 				fmt.Println("please check .env file format")
-			        os.Exit(1)
+				os.Exit(1)
 			}
 		}
 		file.Close()
@@ -44,10 +46,10 @@ func dotenv() map[string]string {
 	return envs
 }
 
-func pass() []string {
-	var pass []string
-	var out bytes.Buffer
+func pass() map[string]string {
+	var pass = make(map[string]string)
 
+	var out bytes.Buffer
 	cmd := exec.Command("pass", "kitt")
 	cmd.Stdout = &out
 	err := cmd.Run()
@@ -61,10 +63,22 @@ func pass() []string {
 		if field == "kitt" {
 			continue
 		}
+		if field == "" {
+			continue
+		}
 		// get rid of that pesky └── & ├── pass likes to output
 		two := strings.Split(field, "─")
 		three := strings.TrimSpace(two[len(two)-1])
-		pass = append([]string{three}, pass...)
+		// get the value of our pass key
+		var res bytes.Buffer
+		value := exec.Command("pass", fmt.Sprintf("kitt/%s", three))
+		value.Stdout = &res
+		err := value.Run()
+		if err != nil {
+			fmt.Println("Error: pass kitt/"+three, err)
+			os.Exit(1)
+		}
+		pass[three] = res.String()
 	}
 
 	return pass
@@ -73,11 +87,11 @@ func pass() []string {
 func myenv() []string {
 	var env []string
 
-	//pass := pass()
-	//fmt.Printf("%v", pass)
+	pass := pass()
+	fmt.Printf("%v", pass)
 
-	dotenv := dotenv()
-	fmt.Printf("%v", dotenv)
+	//dotenv := dotenv()
+	//fmt.Printf("%v", dotenv)
 
 	val, present := os.LookupEnv("HOME")
 	if present {
