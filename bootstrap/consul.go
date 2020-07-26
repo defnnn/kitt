@@ -36,10 +36,6 @@ func dotenv(dir string) map[string]string {
 			}
 		}
 		file.Close()
-	} else {
-		fmt.Println("Error: .env ", err)
-		fmt.Println("did you run make env?")
-		os.Exit(1)
 	}
 
 	return envs
@@ -83,7 +79,7 @@ func pass(path string) map[string]string {
 	return pass
 }
 
-func myenv(path string, dir string, env string) string {
+func myenv(path string, dir string, env string, opt bool) string {
 	var out string
 	pass := pass(path)
 	dotenv := dotenv(dir)
@@ -101,8 +97,10 @@ func myenv(path string, dir string, env string) string {
 		out = fmt.Sprintf("%s=%s", env, val)
 		return out
 	} else {
-		fmt.Println("Error: variable " + env + " not set")
-		os.Exit(1)
+		if !opt {
+			fmt.Println("Error: variable " + env + " not set")
+			os.Exit(1)
+		}
 	}
 
 	return ""
@@ -138,18 +136,17 @@ func main() {
 	var out string
 	in := strings.NewReader("")
 
-
 	// placeholder: until we have packaging solidified,
 	// we'll use an os env var to find kitt's root directory
-        val, present := os.LookupEnv("KITT_DIRECTORY")
-        if present {
+	val, present := os.LookupEnv("KITT_DIRECTORY")
+	if present {
 		dir = val
-        } else {
-                fmt.Println("Error: variable KITT_DIRECTORY not set")
-                os.Exit(1)
-        }
+	} else {
+		fmt.Println("Error: os variable KITT_DIRECTORY not set")
+		os.Exit(1)
+	}
 
-	// ensure our os binaries exist and in our $PATH
+	// ensure our os binaries exist and are in our $PATH
 	pass, err := exec.LookPath("pass")
 	if err != nil {
 		fmt.Printf("cannot find pass in $PATH: %s\n", err)
@@ -168,15 +165,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	home := myenv(pass, dir, "HOME")
-	//email := myenv(pass, dir, "CF_API_EMAIL")
-	//dns := myenv(pass, dir, "CF_DNS_API_TOKEN")
-	//ip, _ := strconv.ParseInt(myenv(pass, dir, "KITT_IP"), 10, 64)
-	domain := myenv(pass, dir, "KITT_DOMAIN")
-	//host := myenv(pass, dir, "KITT_TUNNEL_HOSTNAME")
-	//url := myenv(pass, dir, "KITT_TUNNEL_URL")
-	//xtrenv = append(xtrenv, home, email, dns, ip, domain, host, url)
-	xtrenv = append(xtrenv, home, domain)
+	// load our environment variables
+	home := myenv(pass, dir, "HOME", false)
+	sshauth := myenv(pass, dir, "SSH_AUTH_SOCK", true)
+	sshpid := myenv(pass, dir, "SSH_AGENT_PID", true)
+	email := myenv(pass, dir, "CF_API_EMAIL", false)
+	dns := myenv(pass, dir, "CF_DNS_API_TOKEN", false)
+	api := myenv(pass, dir, "CF_ZONE_API_TOKEN", true)
+	http := myenv(pass, dir, "CONSUL_HTTP_TOKEN", true)
+	ip := myenv(pass, dir, "KITT_IP", false)
+	domain := myenv(pass, dir, "KITT_DOMAIN", false)
+	host := myenv(pass, dir, "KITT_TUNNEL_HOSTNAME", false)
+	url := myenv(pass, dir, "KITT_TUNNEL_URL", false)
+	xtrenv = append(xtrenv, home, email, api, dns, http, ip, domain, host, url)
+	fmt.Println(xtrenv)
 
 	arg = []string{"up", "-d", "consul"}
 	err, out = cli(compose, arg, xtrenv, dir, in)
@@ -197,12 +199,12 @@ func main() {
 		os.Stdout = w
 	}
 	arg = []string{"info"}
-	env = append(xtrenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
+	env = []string{home, "CONSUL_HTTP_ADDR=169.254.32.1:8500"}
 	err, out = cli(consul, arg, env, dir, in)
 	for err != nil {
 		time.Sleep(5 * time.Second)
 		arg = []string{"info"}
-		env = append(xtrenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
+		env = []string{home, "CONSUL_HTTP_ADDR=169.254.32.1:8500"}
 		err, out = cli(consul, arg, env, dir, in)
 	}
 	w.Close()
@@ -217,7 +219,7 @@ func main() {
 		os.Stdout = w
 	}
 	arg = []string{"acl", "bootstrap", "-format=json"}
-	env = append(xtrenv, "CONSUL_HTTP_ADDR=169.254.32.1:8500")
+	env = []string{home, "CONSUL_HTTP_ADDR=169.254.32.1:8500"}
 	err, out = cli(consul, arg, env, dir, in)
 	if err != nil {
 		fmt.Println(out+" Error: ", err)
@@ -234,7 +236,7 @@ func main() {
 		secret := acl["SecretID"].(interface{})
 		str := fmt.Sprintf("%v", secret)
 		arg = []string{"insert", "-e", "kitt/CONSUL_HTTP_TOKEN"}
-		err, out = cli(pass, arg, xtrenv, dir, strings.NewReader(str))
+		err, out = cli(pass, arg, []string{home}, dir, strings.NewReader(str))
 		if err != nil {
 			fmt.Println(out+" Error: ", err)
 			fmt.Println("unable to insert consul secret id acl token into pass")
@@ -242,7 +244,7 @@ func main() {
 			fmt.Println("echo " + str + " | pass insert -e kitt/CONSUL_HTTP_TOKEN")
 		} else {
 			arg = []string{"git", "push"}
-			err, out = cli(pass, arg, xtrenv, dir, in)
+			err, out = cli(pass, arg, []string{home, sshauth, sshpid}, dir, in)
 			if err != nil {
 				fmt.Println(out+" Error: ", err)
 				fmt.Println("please manually run: pass git push")
