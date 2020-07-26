@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"encoding/json"
 	"fmt"
@@ -9,39 +8,11 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	//"strconv"
 	"strings"
 	"time"
 )
 
-func dotenv(dir string) map[string]string {
-	var envs = make(map[string]string)
-
-	if _, err := os.Stat(fmt.Sprintf("%s/.env", dir)); err == nil {
-		file, err := os.Open(fmt.Sprintf("%s/.env", dir))
-		if err != nil {
-			fmt.Println("Error: .env ", err)
-			os.Exit(1)
-		}
-		scanner := bufio.NewScanner(file)
-		scanner.Split(bufio.ScanLines)
-		for scanner.Scan() {
-			text := strings.Split(scanner.Text(), "=")
-			if len(text) == 2 {
-				envs[text[0]] = text[1]
-			} else {
-				fmt.Println("Error: parsing .env")
-				fmt.Println("please check .env file format")
-				os.Exit(1)
-			}
-		}
-		file.Close()
-	}
-
-	return envs
-}
-
-func pass(path string) map[string]string {
+func passenv(path string) map[string]string {
 	var pass = make(map[string]string)
 
 	var out bytes.Buffer
@@ -79,19 +50,14 @@ func pass(path string) map[string]string {
 	return pass
 }
 
-func myenv(path string, dir string, env string, opt bool) string {
+func myenv(pass map[string]string, env string, opt bool) string {
 	var out string
-	pass := pass(path)
-	dotenv := dotenv(dir)
 
 	if val, ok := pass[env]; ok {
 		out = fmt.Sprintf("%s=%s", env, val)
 		return out
 	}
-	if val, ok := dotenv[env]; ok {
-		out = fmt.Sprintf("%s=%s", env, val)
-		return out
-	}
+
 	val, present := os.LookupEnv(env)
 	if present {
 		out = fmt.Sprintf("%s=%s", env, val)
@@ -166,17 +132,18 @@ func main() {
 	}
 
 	// load our environment variables
-	home := myenv(pass, dir, "HOME", false)
-	sshauth := myenv(pass, dir, "SSH_AUTH_SOCK", true)
-	sshpid := myenv(pass, dir, "SSH_AGENT_PID", true)
-	email := myenv(pass, dir, "CF_API_EMAIL", false)
-	dns := myenv(pass, dir, "CF_DNS_API_TOKEN", false)
-	api := myenv(pass, dir, "CF_ZONE_API_TOKEN", true)
-	http := myenv(pass, dir, "CONSUL_HTTP_TOKEN", true)
-	ip := myenv(pass, dir, "KITT_IP", false)
-	domain := myenv(pass, dir, "KITT_DOMAIN", false)
-	host := myenv(pass, dir, "KITT_TUNNEL_HOSTNAME", false)
-	url := myenv(pass, dir, "KITT_TUNNEL_URL", false)
+	kenvs := passenv(pass)
+	home := myenv(kenvs, "HOME", false)
+	sshauth := myenv(kenvs, "SSH_AUTH_SOCK", true)
+	sshpid := myenv(kenvs, "SSH_AGENT_PID", true)
+	email := myenv(kenvs, "CF_API_EMAIL", false)
+	dns := myenv(kenvs, "CF_DNS_API_TOKEN", false)
+	api := myenv(kenvs, "CF_ZONE_API_TOKEN", true)
+	http := myenv(kenvs, "CONSUL_HTTP_TOKEN", true)
+	ip := myenv(kenvs, "KITT_IP", false)
+	domain := myenv(kenvs, "KITT_DOMAIN", false)
+	host := myenv(kenvs, "KITT_TUNNEL_HOSTNAME", false)
+	url := myenv(kenvs, "KITT_TUNNEL_URL", false)
 	xtrenv = append(xtrenv, home, email, api, dns, http, ip, domain, host, url)
 
 	arg = []string{"up", "-d", "consul"}
