@@ -27,18 +27,6 @@ teardown:
 	$(MAKE) seal
 	kitt down
 
-dc0:
-	source ./.env && consul agent -config-file="$(PWD)/etc/consul_config/dc0.hcl" -data-dir="$(PWD)/etc/consul_dc0" -join-wan=$(KITT_IP)
-
-dc0-gateway:
-	set -a; . .env; set +a; exec/kitt-dc0 connect envoy -mesh-gateway -register -address 169.254.32.0:4444
-
-dc0-proxy:
-	set -a; . .env; set +a; exec/kitt-dc0 connect envoy -sidecar-for dc0 -admin-bind 127.0.0.1:19001
-
-dc0-test:
-	@curl http://localhost:9091
-
 backup-consul:
 	exec/kitt-dc1 snapshot save backup/consul/consul-$(shell date +%s)
 
