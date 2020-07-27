@@ -11,7 +11,8 @@ services:
       - ./etc/dnsmasq.d:/etc/dnsmaq.d
       - ./service.d/pihole:/service.d
     environment:
-      - WEBPASSWORD=mehmehmeh
+      - DNS1
+      - DNS2
     ports:
       - ${KITT_IP}:53:53/tcp
       - ${KITT_IP}:53:53/udp
