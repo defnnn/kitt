@@ -15,3 +15,6 @@ etc/data
 docker-compose.override.yml
 pyinfra-debug.log
 backup
+
+fixed-cidr-v6
+daemon.json
