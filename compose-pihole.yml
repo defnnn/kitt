@@ -11,8 +11,8 @@ services:
       - ./etc/dnsmasq.d:/etc/dnsmaq.d
       - ./service.d/pihole:/service.d
     environment:
-      - DNS1
-      - DNS2
+      - DNS1=${KITT_DNS1}
+      - DNS2=${KITT_DNS2}
     ports:
       - ${KITT_IP}:53:53/tcp
       - ${KITT_IP}:53:53/udp
