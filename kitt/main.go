@@ -5,21 +5,27 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/pborman/getopt/v2"
 )
 
 type Config struct {
 	passPath    string
 	composePath string
 	consulPath  string
+	vaultPath   string
 	pass        map[string]string
 	env         map[string]string
 }
 
+// list of requred kitt vars
+// must be added to the kitt directory in pass
 func kittVars() []string {
 	return []string{
 		"CF_API_EMAIL",
 		"CF_DNS_API_TOKEN",
 		"CF_ZONE_API_TOKEN",
+		"COMPOSE_FILE",
 		"KITT_IP",
 		"KITT_DOMAIN",
 		"KITT_DIRECTORY",
@@ -27,6 +33,9 @@ func kittVars() []string {
 		"KITT_TUNNEL_URL",
 	}
 }
+
+//func init() {
+//}
 
 func main() {
 
@@ -49,6 +58,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	vault, err := exec.LookPath("vault")
+	if err != nil {
+		fmt.Printf("cannot find vault in $PATH: %s\n", err)
+		os.Exit(1)
+	}
+
 	// populate our config
 	mypass := passEnv(pass)
 	myenv := osEnv()
@@ -56,6 +71,7 @@ func main() {
 		passPath:    pass,
 		composePath: compose,
 		consulPath:  consul,
+		vaultPath:   vault,
 		pass:        mypass,
 		env:         myenv,
 	}
@@ -69,9 +85,27 @@ func main() {
 	}
 
 	// shall we begin?
+	helpFlag := getopt.BoolLong("help", 'h', "display the help message")
+	initFlag := getopt.BoolLong("init", 'a', "initialize kitt")
+	startFlag := getopt.BoolLong("start", 's', "start kitt")
+	stopFlag := getopt.BoolLong("stop", 'z', "stop kitt")
+	getopt.Parse()
 
-	// next step.... add getopts
-
-	bootConsul(conf)
+	switch {
+	case *initFlag:
+		// add vault init stuff here
+		bootConsul(conf)
+		os.Exit(0)
+	case *startFlag:
+		os.Exit(0)
+	case *stopFlag:
+		os.Exit(0)
+	case *helpFlag:
+		fmt.Println("Name: kitt")
+		getopt.PrintUsage(os.Stderr)
+	default:
+		fmt.Println("Name: kitt")
+		getopt.PrintUsage(os.Stderr)
+	}
 
 }

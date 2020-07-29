@@ -96,9 +96,9 @@ func flatPass(c *Config) []string {
 }
 
 func flatAll(c *Config) []string {
-        envs := append(flatOs(c), flatPass(c)...)
+	envs := append(flatOs(c), flatPass(c)...)
 
-        return envs
+	return envs
 }
 
 func missEnv(c *Config, kitt []string) []string {

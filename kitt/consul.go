@@ -39,7 +39,7 @@ func bootConsul(c *Config) {
 		time.Sleep(5 * time.Second)
 		arg = []string{"info"}
 		env = append(flatOs(c), "CONSUL_HTTP_ADDR=169.254.32.1:8500")
-	        err, out = cli(c, c.consulPath, arg, env, strings.NewReader(""))
+		err, out = cli(c, c.consulPath, arg, env, strings.NewReader(""))
 	}
 	w.Close()
 
@@ -78,7 +78,7 @@ func bootConsul(c *Config) {
 			fmt.Println("echo " + str + " | pass insert -e kitt/CONSUL_HTTP_TOKEN")
 		} else {
 			arg = []string{"git", "push"}
-		        err, out := cli(c, c.passPath, arg, flatOs(c), strings.NewReader(""))
+			err, out := cli(c, c.passPath, arg, flatOs(c), strings.NewReader(""))
 			if err != nil {
 				fmt.Println(out+" Error: ", err)
 				fmt.Println("please manually run: pass git push")
