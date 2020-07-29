@@ -76,11 +76,6 @@ services:
       - "./etc/central_config:/central_config"
     command: ["consul", "connect", "envoy","-sidecar-for", "traefik"]
     network_mode: "service:traefik"
-  hera:
-    image: aschzero/hera:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - ${HOME}/.cloudflared:/certs
   cloudflared:
     image: letfn/cloudflared
     restart: always
