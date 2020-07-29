@@ -101,10 +101,8 @@ func main() {
 	case *stopFlag:
 		os.Exit(0)
 	case *helpFlag:
-		fmt.Println("Name: kitt")
 		getopt.PrintUsage(os.Stderr)
 	default:
-		fmt.Println("Name: kitt")
 		getopt.PrintUsage(os.Stderr)
 	}
 
