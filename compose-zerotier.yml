@@ -4,18 +4,19 @@ services:
   zerotier:
     image: letfn/zerotier
     restart: always
+    env_file: .env
     volumes:
       - ./etc/zerotier/zerotier-one:/var/lib/zerotier-one
       - ./etc/zerotier/config:/data/config
+      - ./service.d/zerotier:/service.d
     cap_drop:
       - NET_RAW
       - NET_ADMIN
       - SYS_ADMIN
     devices:
       - /dev/net/tun
-    links:
-      - traefik
     privileged: true
+    network_mode: host
 
 networks:
   default:

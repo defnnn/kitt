@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+function main {
+  if [[ -n "${ZT_DEST:-}" ]]; then
+    socat tcp4-listen:22,reuseaddr,fork   "TCP:${ZT_DEST}:2222" &
+    socat tcp4-listen:80,reuseaddr,fork   "TCP:${ZT_DEST}:80" &
+    socat tcp4-listen:443,reuseaddr,fork  "TCP:${ZT_DEST}:443" &
+    socat tcp4-listen:1194,reuseaddr,fork "TCP:${ZT_DEST}:1194" &
+    socat tcp4-listen:53,reuseaddr,fork   "TCP:${ZT_DEST}:53" &
+    socat udp4-recvfrom:53,fork   "UDP4-SENDTO:${ZT_DEST}:53" &
+  fi
+}
+
+main "$@"

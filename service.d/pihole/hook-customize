@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+function main {
+  local ip_consul=
+
+  while true; do
+    ip_consul="$(host consul | awk '{print $NF}')"
+    if [[ -n "${ip_consul}" ]]; then
+      echo "server=/consul/${ip_consul}#8600" > /etc/dnsmasq.d/10-consul.conf
+      break
+    fi
+    sleep 1
+  done
+}
+
+main "$@"

@@ -1,0 +1,13 @@
+version: '3.7'
+
+services:
+  hera:
+    image: aschzero/hera:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ${HOME}/.cloudflared:/certs
+
+networks:
+  default:
+    external:
+      name: kitt
