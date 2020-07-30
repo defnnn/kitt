@@ -26,6 +26,7 @@ func kittVars() []string {
 		"CF_DNS_API_TOKEN",
 		"CF_ZONE_API_TOKEN",
 		"COMPOSE_FILE",
+		"CONSUL_HTTP_TOKEN",
 		"KITT_IP",
 		"KITT_DOMAIN",
 		"KITT_DIRECTORY",
