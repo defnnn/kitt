@@ -6,7 +6,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/pborman/getopt/v2"
+	"github.com/spf13/cobra"
 )
 
 type Config struct {
@@ -34,9 +34,6 @@ func kittVars() []string {
 		"KITT_TUNNEL_URL",
 	}
 }
-
-//func init() {
-//}
 
 func main() {
 
@@ -86,25 +83,53 @@ func main() {
 	}
 
 	// shall we begin?
-	helpFlag := getopt.BoolLong("help", 'h', "display the help message")
-	initFlag := getopt.BoolLong("init", 'a', "initialize kitt")
-	startFlag := getopt.BoolLong("start", 's', "start kitt")
-	stopFlag := getopt.BoolLong("stop", 'z', "stop kitt")
-	getopt.Parse()
+	var arg []string
 
-	switch {
-	case *initFlag:
-		// add vault init stuff here
-		bootConsul(conf)
-		os.Exit(0)
-	case *startFlag:
-		os.Exit(0)
-	case *stopFlag:
-		os.Exit(0)
-	case *helpFlag:
-		getopt.PrintUsage(os.Stderr)
-	default:
-		getopt.PrintUsage(os.Stderr)
+	var cmdInit = &cobra.Command{
+		Use:   "init",
+		Short: "initialize kitt",
+		Long:  `init will bootstrap a brand new kitt instance.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			// add backup dir in kitt root dir
+			// create kitt docker network
+			// add dummy0 interface
+			bootConsul(conf)
+			// initialize vault
+		},
 	}
+
+	var cmdStart = &cobra.Command{
+		Use:   "start",
+		Short: "start kitt",
+		Long:  `start will run all kitt services configured in COMPOSE_FILE.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			arg = []string{"up", "-d"}
+			err, out := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
+			if err != nil {
+				fmt.Println(out+" Error: ", err)
+				os.Exit(1)
+			}
+
+		},
+	}
+
+	var cmdStop = &cobra.Command{
+		Use:   "stop",
+		Short: "stop kitt",
+		Long:  `stop will shutdown a running kitt service.`,
+		Run: func(cmd *cobra.Command, args []string) {
+			arg = []string{"down"}
+			err, out := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
+			if err != nil {
+				fmt.Println(out+" Error: ", err)
+				os.Exit(1)
+			}
+
+		},
+	}
+
+	var rootCmd = &cobra.Command{Use: "kitt"}
+	rootCmd.AddCommand(cmdInit, cmdStart, cmdStop)
+	rootCmd.Execute()
 
 }
