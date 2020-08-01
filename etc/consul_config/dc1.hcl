@@ -28,9 +28,4 @@ acl = {
   enabled = true
   default_policy = "allow"
   enable_token_persistence = true
-
-  tokens {
-    master = "FBAF54CC-E03D-4763-9F19-376114D3857B"
-    agent = "FBAF54CC-E03D-4763-9F19-376114D3857B"
-  }
 }
