@@ -11,6 +11,7 @@ import (
 
 type Config struct {
 	passPath    string
+	dockerPath  string
 	composePath string
 	consulPath  string
 	vaultPath   string
@@ -44,6 +45,12 @@ func main() {
 		os.Exit(1)
 	}
 
+	docker, err := exec.LookPath("docker")
+	if err != nil {
+		fmt.Printf("cannot find docker in $PATH: %s\n", err)
+		os.Exit(1)
+	}
+
 	compose, err := exec.LookPath("docker-compose")
 	if err != nil {
 		fmt.Printf("cannot find docker-compose in $PATH: %s\n", err)
@@ -67,6 +74,7 @@ func main() {
 	myenv := osEnv()
 	conf := &Config{
 		passPath:    pass,
+		dockerPath:  docker,
 		composePath: compose,
 		consulPath:  consul,
 		vaultPath:   vault,
@@ -90,8 +98,8 @@ func main() {
 		Short: "initialize kitt",
 		Long:  `init will bootstrap a brand new kitt instance.`,
 		Run: func(cmd *cobra.Command, args []string) {
-			// add backup dir in kitt root dir
-			// create kitt docker network
+			backupDir(conf)
+			dockerNet(conf)
 			// add dummy0 interface
 			bootConsul(conf)
 			// initialize vault
