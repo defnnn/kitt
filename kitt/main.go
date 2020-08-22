@@ -112,7 +112,8 @@ func main() {
 		Long:  `start will run all kitt services configured in COMPOSE_FILE.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			arg = []string{"up", "-d"}
-			err, out := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
+			err, out, stdout := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
+			fmt.Println(stdout)
 			if err != nil {
 				fmt.Println(out+" Error: ", err)
 				os.Exit(1)
@@ -127,7 +128,8 @@ func main() {
 		Long:  `stop will shutdown a running kitt service.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			arg = []string{"down"}
-			err, out := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
+			err, out, stdout := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
+			fmt.Println(stdout)
 			if err != nil {
 				fmt.Println(out+" Error: ", err)
 				os.Exit(1)
