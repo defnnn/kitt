@@ -62,6 +62,7 @@ func dummyNet(c *Config) {
 				fmt.Println(out+" Error: ", err)
 				os.Exit(1)
 			}
+			fmt.Println("kitt dummy0 interface created")
 		}
 	case "darwin":
 		if !dummyCheck("lo0") {
@@ -72,6 +73,7 @@ func dummyNet(c *Config) {
 				fmt.Println(out+" Error: ", err)
 				os.Exit(1)
 			}
+			fmt.Println("kitt dummy0 interface created")
 		}
 	default:
 		fmt.Println("Error: cannot add kitt dummy0 interface, your operating system is not supported")

@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Config host specific configurations
+// Config user's host specific configurations
 type Config struct {
 	passPath    string
 	dockerPath  string
@@ -101,7 +101,6 @@ func main() {
 		Run: func(cmd *cobra.Command, args []string) {
 			backupDir(conf)
 			dockerNet(conf)
-			// add dummy0 interface
 			dummyNet(conf)
 			bootConsul(conf)
 			// initialize vault
