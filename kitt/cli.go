@@ -6,7 +6,7 @@ import (
 	"os/exec"
 )
 
-func cli(c *Config, path string, args []string, envs []string, in io.Reader) (error, string, string) {
+func cli(c *Config, path string, args []string, envs []string, in io.Reader) (string, string, error) {
 	var stdout bytes.Buffer
 	cli := append([]string{path}, args...)
 
@@ -22,9 +22,9 @@ func cli(c *Config, path string, args []string, envs []string, in io.Reader) (er
 
 	err := cmd.Run()
 	if err != nil {
-		return err, cmd.String(), string(stdout.Bytes())
+		return cmd.String(), string(stdout.Bytes()), err
 	}
 
-	return nil, cmd.String(), string(stdout.Bytes())
+	return cmd.String(), string(stdout.Bytes()), nil
 
 }

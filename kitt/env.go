@@ -106,7 +106,7 @@ func missEnv(c *Config, kitt []string) []string {
 	var ya bool
 
 	for _, v := range kitt {
-		for k, _ := range c.pass {
+		for k := range c.pass {
 			if k == v {
 				ya = true
 				break

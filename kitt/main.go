@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
+// Config host specific configurations
 type Config struct {
 	passPath    string
 	dockerPath  string
@@ -101,6 +102,7 @@ func main() {
 			backupDir(conf)
 			dockerNet(conf)
 			// add dummy0 interface
+			dummyNet(conf)
 			bootConsul(conf)
 			// initialize vault
 		},
@@ -112,7 +114,7 @@ func main() {
 		Long:  `start will run all kitt services configured in COMPOSE_FILE.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			arg = []string{"up", "-d"}
-			err, out, stdout := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
+			out, stdout, err := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
 			fmt.Println(stdout)
 			if err != nil {
 				fmt.Println(out+" Error: ", err)
@@ -128,7 +130,7 @@ func main() {
 		Long:  `stop will shutdown a running kitt service.`,
 		Run: func(cmd *cobra.Command, args []string) {
 			arg = []string{"down"}
-			err, out, stdout := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
+			out, stdout, err := cli(conf, compose, arg, flatAll(conf), strings.NewReader(""))
 			fmt.Println(stdout)
 			if err != nil {
 				fmt.Println(out+" Error: ", err)

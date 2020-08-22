@@ -14,7 +14,7 @@ func bootConsul(c *Config) {
 	var out string
 
 	arg = []string{"up", "-d", "consul"}
-	err, out, stdout := cli(c, c.composePath, arg, flatAll(c), strings.NewReader(""))
+	out, stdout, err := cli(c, c.composePath, arg, flatAll(c), strings.NewReader(""))
 	fmt.Println(stdout)
 	if err != nil {
 		fmt.Println(out+" Error: ", err)
@@ -24,17 +24,17 @@ func bootConsul(c *Config) {
 	fmt.Println("waiting for consul to start...")
 	arg = []string{"info"}
 	env = append(flatOs(c), "CONSUL_HTTP_ADDR=169.254.32.1:8500")
-	err, out, stdout = cli(c, c.consulPath, arg, env, strings.NewReader(""))
+	out, stdout, err = cli(c, c.consulPath, arg, env, strings.NewReader(""))
 	for err != nil { // possible infinite loop?
 		time.Sleep(5 * time.Second)
 		arg = []string{"info"}
 		env = append(flatOs(c), "CONSUL_HTTP_ADDR=169.254.32.1:8500")
-		err, out, stdout = cli(c, c.consulPath, arg, env, strings.NewReader(""))
+		out, stdout, err = cli(c, c.consulPath, arg, env, strings.NewReader(""))
 	}
 
 	arg = []string{"acl", "bootstrap", "-format=json"}
 	env = append(flatOs(c), "CONSUL_HTTP_ADDR=169.254.32.1:8500")
-	err, out, stdout = cli(c, c.consulPath, arg, env, strings.NewReader(""))
+	out, stdout, err = cli(c, c.consulPath, arg, env, strings.NewReader(""))
 	fmt.Println(stdout)
 	if err != nil {
 		fmt.Println(out+" Error: ", err)
@@ -48,7 +48,7 @@ func bootConsul(c *Config) {
 		secret := acl["SecretID"].(interface{})
 		str := fmt.Sprintf("%v", secret)
 		arg = []string{"insert", "-e", "kitt/CONSUL_HTTP_TOKEN"}
-		err, out, stdout := cli(c, c.passPath, arg, flatOs(c), strings.NewReader(str))
+		out, stdout, err := cli(c, c.passPath, arg, flatOs(c), strings.NewReader(str))
 		fmt.Println(stdout)
 		if err != nil {
 			fmt.Println(out+" Error: ", err)
@@ -57,7 +57,7 @@ func bootConsul(c *Config) {
 			fmt.Println("echo " + str + " | pass insert -e kitt/CONSUL_HTTP_TOKEN")
 		} else {
 			arg = []string{"git", "push"}
-			err, out, stdout := cli(c, c.passPath, arg, flatOs(c), strings.NewReader(""))
+			out, stdout, err := cli(c, c.passPath, arg, flatOs(c), strings.NewReader(""))
 			fmt.Println(stdout)
 			if err != nil {
 				fmt.Println(out+" Error: ", err)
@@ -67,7 +67,7 @@ func bootConsul(c *Config) {
 	}
 
 	arg = []string{"down"}
-	err, out, stdout = cli(c, c.composePath, arg, flatAll(c), strings.NewReader(""))
+	out, stdout, err = cli(c, c.composePath, arg, flatAll(c), strings.NewReader(""))
 	fmt.Println(stdout)
 	if err != nil {
 		fmt.Println(out+" Error: ", err)
