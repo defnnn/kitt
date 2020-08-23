@@ -1,12 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"io"
-	"os"
 	"os/exec"
 )
 
-func cli(c *Config, path string, args []string, envs []string, in io.Reader) (error, string) {
+func cli(c *Config, path string, args []string, envs []string, in io.Reader) (string, string, error) {
+	var stdout bytes.Buffer
 	cli := append([]string{path}, args...)
 
 	cmd := &exec.Cmd{
@@ -15,15 +16,15 @@ func cli(c *Config, path string, args []string, envs []string, in io.Reader) (er
 		Env:    envs,
 		Dir:    c.pass["KITT_DIRECTORY"],
 		Stdin:  in,
-		Stdout: os.Stdout,
-		Stderr: os.Stdout,
+		Stdout: &stdout,
+		Stderr: &stdout,
 	}
 
 	err := cmd.Run()
 	if err != nil {
-		return err, cmd.String()
+		return cmd.String(), string(stdout.Bytes()), err
 	}
 
-	return nil, cmd.String()
+	return cmd.String(), string(stdout.Bytes()), nil
 
 }
