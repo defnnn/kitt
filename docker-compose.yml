@@ -112,24 +112,6 @@ services:
       - "traefik.http.routers.consul.entrypoints=https"
       - "traefik.http.routers.consul.rule=HostRegexp(`consul.{domain:.+}`)"
       - "traefik.http.services.consul.loadbalancer.server.port=8500"
-  consul-gateway:
-    image: letfn/consul-envoy:v1.8.0-v1.14.2
-    environment:
-      - CONSUL_HTTP_ADDR=${KITT_IP}:8500
-      - CONSUL_GRPC_ADDR=${KITT_IP}:8502
-      - CONSUL_HTTP_TOKEN
-    ports:
-      - ${KITT_IP}:4444:443
-    command: [
-      "consul", "connect", "envoy",
-      "-mesh-gateway",
-      "-register",
-      "-address", "{{GetInterfaceIP \"eth0\"}}",
-      "-wan-address", "${KITT_IP}:4444",
-      "--",
-      "-l", "debug"]
-    depends_on:
-      - consul
   vault:
     image: vault:1.5.0
     hostname: "vault"
