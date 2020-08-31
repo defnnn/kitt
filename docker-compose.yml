@@ -80,7 +80,7 @@ services:
     image: letfn/cloudflared
     restart: always
     volumes:
-      - ${HOME}/.cloudflared:/etc/cloudflared
+      - ./etc/cloudflared:/etc/cloudflared
     environment:
       - TUNNEL_URL=https://${KITT_TUNNEL_URL}
       - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
