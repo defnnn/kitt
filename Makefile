@@ -67,3 +67,16 @@ daemon.json-inner:
 
 fixed-cidr-v6:
 	@echo $(shell docker-compose exec zerotier zerotier-cli listnetworks | tail -n +2 | head -1 | awk '{print $$9}' | cut -d, -f1 | cut -d/ -f1 | cut -b1-12)$(shell docker-compose exec zerotier cut -c 1-2 /var/lib/zerotier-one/identity.public):$(shell docker-compose exec zerotier cut -c 3-6 /var/lib/zerotier-one/identity.public):$(shell docker-compose exec zerotier cut -c 7-10 /var/lib/zerotier-one/identity.public)::/80 > fixed-cidr-v6.1 && mv fixed-cidr-v6.1 fixed-cidr-v6
+
+sync:
+	docker cp $(HOME)/.cloudflared/. $(shell docker-compose ps -q cloudflared):/etc/cloudflared
+	docker cp etc/traefik/. $(shell docker-compose ps -q traefik):/etc/traefik
+	docker cp etc/service_config $(shell docker-compose ps -q traefik-proxy):/config
+	docker cp etc/central_config $(shell docker-compose ps -q traefik-proxy):/central_config
+	docker cp etc/consul_config $(shell docker-compose ps -q consul):/config
+	docker cp etc/consul_dc1 $(shell docker-compose ps -q consul):/consul/data
+	docker cp etc/vault $(shell docker-compose ps -q vault):/config
+	docker cp vault-service $(shell docker-compose ps -q vault):/service/service
+	docker cp etc/service_config $(shell docker-compose ps -q vault-proxy):/config
+	docker cp etc/central_config $(shell docker-compose ps -q vault-proxy):/central_config
+
