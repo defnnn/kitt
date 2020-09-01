@@ -1,8 +1,0 @@
-USAGE: kitt logs [flags] --  args
-
-Calls docker-compose logs to tail service logs
-
-args: arguments to docker-compose
-
-flags:
-  -h,--help:  show this help (default: false)

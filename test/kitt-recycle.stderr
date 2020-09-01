@@ -1,9 +1,0 @@
-USAGE: kitt recycle [flags] --  args
-
-Calls docker-compose build/pull to get the latest images and recreates
-services.
-
-args: arguments to docker-compose
-
-flags:
-  -h,--help:  show this help (default: false)
