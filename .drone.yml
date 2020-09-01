@@ -1,155 +1,20 @@
 ---
 kind: pipeline
 type: docker
-name: fmt
+name: check
 
 platform:
   os: linux
   arch: amd64
 
 steps:
-- name: everything
+- name: fmt
   image: letfn/drone
   settings:
     task: fmt
-
----
-kind: pipeline
-type: docker
-name: lint
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: everything
+- name: lint
   image: letfn/drone
   settings:
     task: lint
-
----
-kind: pipeline
-type: docker
-name: build
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: kaniko
-  image: letfn/drone-kaniko
-  settings:
-    args: --destination=registry.defn.sh/defn/kitt
-    cache: true
-    cache_repo: registry.defn.sh/defn/cache
-    password:
-      from_secret: docker_password
-    repo: registry.defn.sh/defn/kitt
-    tag: latest
-    username:
-      from_secret: docker_username
-
-depends_on:
-- fmt
-- lint
-
----
-kind: pipeline
-type: docker
-name: docs
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: local
-  image: letfn/drone-hugo
-
-depends_on:
-- build
-
----
-kind: secret
-name: docker_username
-
-get:
-  path: kv/data/drone/common
-  name: docker_username
-
----
-kind: secret
-name: docker_password
-
-get:
-  path: kv/data/drone/common
-  name: docker_password
-
----
-kind: secret
-name: github_token
-
-get:
-  path: kv/data/drone/common
-  name: github_token
-
----
-kind: pipeline
-type: docker
-name: meh
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: ownership
-  image: defn/home
-  commands:
-  - if ! test -w .; then sudo chown -R -h app:app .; fi
-
----
-kind: pipeline
-type: docker
-name: requirements
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: checking
-  image: letfn/python
-  commands:
-  - ls -ld /drone/src
-  - ls -ld /drone/src/*
-
-- name: everything
-  image: letfn/python
-  commands:
-  - . /app/venv/bin/activate
-  - pip-compile /drone/src/requirements.in -o /tmp/requirements.txt
-  - if test -w . ; then cp /tmp/requirements.txt requirements.txt; else diff requirements.txt /tmp/requirements.txt || true;  fi
-
-depends_on:
-- meh
-
----
-kind: pipeline
-type: docker
-name: ci-test
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-- name: everything
-  image: letfn/python
-  commands:
-  - (cd test && make setup)
-  - make drone-test
 
 ...
