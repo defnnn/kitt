@@ -38,8 +38,8 @@ services:
       - CF_DNS_API_TOKEN
       - CF_ZONE_API_TOKEN
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "./etc/traefik:/etc/traefik"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - traefik:/etc/traefik
     depends_on:
       - consul
     dns:
@@ -72,15 +72,15 @@ services:
       - CONSUL_GRPC_ADDR=${KITT_IP}:8502
       - CONSUL_HTTP_TOKEN
     volumes:
-      - "./etc/service_config:/config"
-      - "./etc/central_config:/central_config"
+      - traefik_proxy_config:/config
+      - traefik_proxy_central:/central_config
     command: ["consul", "connect", "envoy","-sidecar-for", "traefik"]
     network_mode: "service:traefik"
   cloudflared:
     image: letfn/cloudflared
     restart: always
     volumes:
-      - ./etc/cloudflared:/etc/cloudflared
+      - cloudflared:/etc/cloudflared
     environment:
       - TUNNEL_URL=https://${KITT_TUNNEL_URL}
       - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
@@ -99,8 +99,8 @@ services:
       "consul","agent",
       "-config-file=/config/dc1.hcl"]
     volumes:
-      - "./etc/consul_config:/config"
-      - "./etc/consul_dc1:/consul/data"
+      - consul_config:/config
+      - consul:/consul/data
     ports:
       - "${KITT_IP}:8500:8500"
       - "${KITT_IP}:8502:8502"
@@ -116,7 +116,7 @@ services:
     image: vault:1.5.0
     hostname: "vault"
     restart: on-failure
-    command: [ "sh", "/service" ]
+    command: [ "sh", "/service/service" ]
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200
       - VAULT_LOG_LEVEL=debug
@@ -127,8 +127,8 @@ services:
       - AWS_SECURITY_TOKEN
       - AWS_SESSION_TOKEN
     volumes:
-      - ./etc/vault:/config
-      - ./vault-service:/service
+      - vault_config:/config
+      - vault_service:/service
     ports:
       - ${KITT_IP}:8200:8200
     cap_add:
@@ -151,10 +151,36 @@ services:
       SERVICE_CONFIG: /config/vault.hcl
       CENTRAL_CONFIG: /central_config/vault.hcl
     volumes:
-      - "./etc/service_config:/config"
-      - "./etc/central_config:/central_config"
+      - vault_proxy_config:/config
+      - vault_proxy_central:/central_config
     command: ["consul", "connect", "envoy","-sidecar-for", "vault"]
     network_mode: "service:vault"
+  control:
+    image: ubuntu
+    entrypoint: [ "sleep", "86400" ]
+    volumes:
+      - traefik:/mnt/traefik
+      - traefik_proxy_config:/mnt/traefik_config
+      - traefik_proxy_central:/mnt/traefik_central
+      - cloudflared:/mnt/cloudflared
+      - consul:/mnt/consul
+      - consul_config:/mnt/consul_config
+      - vault_config:/mnt/vault_config
+      - vault_service:/mnt/vault_service
+      - vault_proxy_config:/mnt/vault_proxy_config
+      - vault_proxy_central:/mnt/vault_proxy_central
+
+volumes:
+  traefik:
+  traefik_proxy_config:
+  traefik_proxy_central:
+  cloudflared:
+  consul:
+  consul_config:
+  vault_config:
+  vault_service:
+  vault_proxy_config:
+  vault_proxy_central:
 
 networks:
   default:
