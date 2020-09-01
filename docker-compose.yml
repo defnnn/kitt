@@ -130,11 +130,6 @@ services:
     depends_on:
       - consul
       - traefik
-  control:
-    image: ubuntu
-    entrypoint: [ "sleep", "864000" ]
-    volumes:
-      - cloudflared:/mnt/cloudflared
 
 volumes:
   traefik:
