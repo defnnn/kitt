@@ -12,6 +12,7 @@ steps:
   image: letfn/drone
   settings:
     task: fmt
+
 - name: lint
   image: letfn/drone
   settings:
