@@ -71,12 +71,8 @@ fixed-cidr-v6:
 sync:
 	docker cp $(HOME)/.cloudflared/. $(shell docker-compose ps -q cloudflared):/etc/cloudflared
 	docker cp etc/traefik/. $(shell docker-compose ps -q traefik):/etc/traefik
-	docker cp etc/service_config $(shell docker-compose ps -q traefik-proxy):/config
-	docker cp etc/central_config $(shell docker-compose ps -q traefik-proxy):/central_config
 	docker cp etc/consul_config $(shell docker-compose ps -q consul):/config
 	docker cp etc/consul_dc1 $(shell docker-compose ps -q consul):/consul/data
 	docker cp etc/vault $(shell docker-compose ps -q vault):/config
 	docker cp vault-service $(shell docker-compose ps -q vault):/service/service
-	docker cp etc/service_config $(shell docker-compose ps -q vault-proxy):/config
-	docker cp etc/central_config $(shell docker-compose ps -q vault-proxy):/central_config
 

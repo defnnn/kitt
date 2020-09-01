@@ -63,27 +63,14 @@ services:
       - "traefik.http.routers.domains.tls.certresolver=le"
       - "traefik.http.routers.domains.tls.domains[0].main=traefik-kitt.${KITT_DOMAIN}"
       - "traefik.http.routers.domains.tls.domains[0].sans=vault.${KITT_DOMAIN},consul.${KITT_DOMAIN}"
-  traefik-proxy:
-    image: letfn/consul-envoy:v1.8.0-v1.14.2
-    environment:
-      - SERVICE_CONFIG=/config/traefik.hcl
-      - CENTRAL_CONFIG=/central_config/traefik.hcl
-      - CONSUL_HTTP_ADDR=${KITT_IP}:8500
-      - CONSUL_GRPC_ADDR=${KITT_IP}:8502
-      - CONSUL_HTTP_TOKEN
-    volumes:
-      - traefik_proxy_config:/config
-      - traefik_proxy_central:/central_config
-    command: ["consul", "connect", "envoy","-sidecar-for", "traefik"]
-    network_mode: "service:traefik"
   cloudflared:
     image: letfn/cloudflared
     restart: always
     volumes:
       - cloudflared:/etc/cloudflared
     environment:
-      - TUNNEL_URL=https://${KITT_TUNNEL_URL}
-      - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
+        - TUNNEL_URL=https://${KITT_TUNNEL_URL}
+        - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
     depends_on:
       - traefik
       - consul
@@ -143,30 +130,19 @@ services:
     depends_on:
       - consul
       - traefik
-  vault-proxy:
-    image: letfn/consul-envoy:v1.8.0-v1.14.2
-    environment:
-      CONSUL_HTTP_ADDR: ${KITT_IP}:8500
-      CONSUL_GRPC_ADDR: ${KITT_IP}:8502
-      SERVICE_CONFIG: /config/vault.hcl
-      CENTRAL_CONFIG: /central_config/vault.hcl
+  control:
+    image: ubuntu
+    entrypoint: [ "sleep", "864000" ]
     volumes:
-      - vault_proxy_config:/config
-      - vault_proxy_central:/central_config
-    command: ["consul", "connect", "envoy","-sidecar-for", "vault"]
-    network_mode: "service:vault"
+      - cloudflared:/mnt/cloudflared
 
 volumes:
   traefik:
-  traefik_proxy_config:
-  traefik_proxy_central:
   cloudflared:
   consul:
   consul_config:
   vault_config:
   vault_service:
-  vault_proxy_config:
-  vault_proxy_central:
 
 networks:
   default:
