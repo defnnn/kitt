@@ -155,20 +155,6 @@ services:
       - vault_proxy_central:/central_config
     command: ["consul", "connect", "envoy","-sidecar-for", "vault"]
     network_mode: "service:vault"
-  control:
-    image: ubuntu
-    entrypoint: [ "sleep", "86400" ]
-    volumes:
-      - traefik:/mnt/traefik
-      - traefik_proxy_config:/mnt/traefik_config
-      - traefik_proxy_central:/mnt/traefik_central
-      - cloudflared:/mnt/cloudflared
-      - consul:/mnt/consul
-      - consul_config:/mnt/consul_config
-      - vault_config:/mnt/vault_config
-      - vault_service:/mnt/vault_service
-      - vault_proxy_config:/mnt/vault_proxy_config
-      - vault_proxy_central:/mnt/vault_proxy_central
 
 volumes:
   traefik:
