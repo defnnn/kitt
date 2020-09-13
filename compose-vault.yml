@@ -1,0 +1,41 @@
+version: '3.7'
+
+services:
+  vault:
+    image: vault:1.5.3
+    hostname: "vault"
+    restart: on-failure
+    command: [ "vault", "server", "-config=/config/vault.hcl" ]
+    environment:
+      - VAULT_ADDR=http://127.0.0.1:8200
+      - VAULT_LOG_LEVEL=debug
+      - AWS_DEFAULT_REGION
+      - AWS_REGION
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_SECURITY_TOKEN
+      - AWS_SESSION_TOKEN
+    volumes:
+      - vault_config:/config
+    ports:
+      - ${KITT_IP}:8200:8200
+    cap_add:
+      - IPC_LOCK
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vault.entrypoints=http,https"
+      - "traefik.http.routers.vault.rule=HostRegexp(`vault.{domain:.+}`)"
+      - "traefik.http.services.vault.loadbalancer.server.port=8200"
+    links:
+      - consul
+    depends_on:
+      - consul
+      - traefik
+
+volumes:
+  vault_config:
+
+networks:
+  default:
+    external:
+      name: kitt

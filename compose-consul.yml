@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  consul:
+    image: consul:1.8.4
+    hostname: kitt-consul
+    environment:
+      - CONSUL_HTTP_TOKEN
+    command: [
+      "consul","agent",
+      "-config-file=/config/dc1.hcl"]
+    volumes:
+      - consul_config:/config
+      - consul_data:/consul/data
+    ports:
+      - "${KITT_IP}:8500:8500"
+      - "${KITT_IP}:8502:8502"
+      - "${KITT_IP}:8300:8300"
+      - "${KITT_IP}:8302:8302/tcp"
+      - "${KITT_IP}:8302:8302/udp"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.consul.entrypoints=http,https"
+      - "traefik.http.routers.consul.rule=HostRegexp(`consul.{domain:.+}`)"
+      - "traefik.http.services.consul.loadbalancer.server.port=8500"
+
+volumes:
+  consul_data:
+  consul_config:
+
+networks:
+  default:
+    external:
+      name: kitt

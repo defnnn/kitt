@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   traefik:
-    image: "traefik:v2.2.7"
+    image: "traefik:v2.2.10"
     command:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
@@ -61,64 +61,9 @@ services:
       - "traefik.http.routers.domains.tls.certresolver=le"
       - "traefik.http.routers.domains.tls.domains[0].main=traefik-kitt.${KITT_DOMAIN}"
       - "traefik.http.routers.domains.tls.domains[0].sans=vault.${KITT_DOMAIN},consul.${KITT_DOMAIN}"
-  consul:
-    image: consul:1.8.0
-    hostname: kitt-consul
-    environment:
-      - CONSUL_HTTP_TOKEN
-    command: [
-      "consul","agent",
-      "-config-file=/config/dc1.hcl"]
-    volumes:
-      - consul_config:/config
-      - consul_data:/consul/data
-    ports:
-      - "${KITT_IP}:8500:8500"
-      - "${KITT_IP}:8502:8502"
-      - "${KITT_IP}:8300:8300"
-      - "${KITT_IP}:8302:8302/tcp"
-      - "${KITT_IP}:8302:8302/udp"
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.consul.entrypoints=http,https"
-      - "traefik.http.routers.consul.rule=HostRegexp(`consul.{domain:.+}`)"
-      - "traefik.http.services.consul.loadbalancer.server.port=8500"
-  vault:
-    image: vault:1.5.0
-    hostname: "vault"
-    restart: on-failure
-    command: [ "vault", "server", "-config=/config/vault.hcl" ]
-    environment:
-      - VAULT_ADDR=http://127.0.0.1:8200
-      - VAULT_LOG_LEVEL=debug
-      - AWS_DEFAULT_REGION
-      - AWS_REGION
-      - AWS_ACCESS_KEY_ID
-      - AWS_SECRET_ACCESS_KEY
-      - AWS_SECURITY_TOKEN
-      - AWS_SESSION_TOKEN
-    volumes:
-      - vault_config:/config
-    ports:
-      - ${KITT_IP}:8200:8200
-    cap_add:
-      - IPC_LOCK
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.vault.entrypoints=http,https"
-      - "traefik.http.routers.vault.rule=HostRegexp(`vault.{domain:.+}`)"
-      - "traefik.http.services.vault.loadbalancer.server.port=8200"
-    links:
-      - consul
-    depends_on:
-      - consul
-      - traefik
 
 volumes:
   traefik:
-  consul_data:
-  consul_config:
-  vault_config:
 
 networks:
   default:
