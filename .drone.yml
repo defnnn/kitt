@@ -1,19 +1,19 @@
 ---
 kind: pipeline
 type: docker
-name: check
+name: style
 
 platform:
   os: linux
   arch: amd64
 
 steps:
-- name: fmt
+- name: drone fmt
   image: letfn/drone
   settings:
     task: fmt
 
-- name: lint
+- name: drone lint
   image: letfn/drone
   settings:
     task: lint
