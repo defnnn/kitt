@@ -7,7 +7,7 @@ services:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.usebindportip=false
-      - --providers.consulcatalog=true
+      - --providers.consulcatalog=false
       - --providers.consulcatalog.exposedbydefault=false
       - --providers.consulcatalog.endpoint.address=${KITT_IP}:8500
       - --providers.consulcatalog.endpoint.datacenter=dc1
@@ -38,8 +38,6 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - traefik:/etc/traefik
-    depends_on:
-      - consul
     dns:
       - 1.1.1.1
       - 1.0.0.1
