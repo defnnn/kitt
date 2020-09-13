@@ -67,7 +67,7 @@ services:
     volumes:
       - cloudflared:/etc/cloudflared
     environment:
-        - TUNNEL_URL=https://${KITT_TUNNEL_URL}
+        - TUNNEL_URL=http://${KITT_TUNNEL_URL}
         - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
     depends_on:
       - traefik
@@ -94,7 +94,7 @@ services:
       - "${KITT_IP}:8302:8302/udp"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.consul.entrypoints=https"
+      - "traefik.http.routers.consul.entrypoints=http,https"
       - "traefik.http.routers.consul.rule=HostRegexp(`consul.{domain:.+}`)"
       - "traefik.http.services.consul.loadbalancer.server.port=8500"
   vault:
@@ -120,7 +120,7 @@ services:
       - IPC_LOCK
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.vault.entrypoints=https"
+      - "traefik.http.routers.vault.entrypoints=http,https"
       - "traefik.http.routers.vault.rule=HostRegexp(`vault.{domain:.+}`)"
       - "traefik.http.services.vault.loadbalancer.server.port=8200"
     links:
