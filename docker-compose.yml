@@ -19,8 +19,6 @@ services:
       - --entrypoints.openvpn.address=:1194
       - --entrypoints.http.address=:80
       - --entrypoints.http.proxyprotocol.insecure
-      - --entrypoints.http.http.redirections.entryPoint.to=https
-      - --entrypoints.http.http.redirections.entryPoint.scheme=https
       - --certificatesResolvers.le.acme.dnschallenge=true
       - --certificatesResolvers.le.acme.dnsChallenge.provider=cloudflare
       - --certificatesResolvers.le.acme.email=${CF_API_EMAIL}
