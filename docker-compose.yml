@@ -71,7 +71,7 @@ services:
       "-config-file=/config/dc1.hcl"]
     volumes:
       - consul_config:/config
-      - consul:/consul/data
+      - consul_data:/consul/data
     ports:
       - "${KITT_IP}:8500:8500"
       - "${KITT_IP}:8502:8502"
@@ -99,7 +99,6 @@ services:
       - AWS_SESSION_TOKEN
     volumes:
       - vault_config:/config
-      - vault_service:/service
     ports:
       - ${KITT_IP}:8200:8200
     cap_add:
@@ -117,10 +116,9 @@ services:
 
 volumes:
   traefik:
-  consul:
+  consul_data:
   consul_config:
   vault_config:
-  vault_service:
 
 networks:
   default:
