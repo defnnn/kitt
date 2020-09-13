@@ -87,7 +87,7 @@ services:
     image: vault:1.5.0
     hostname: "vault"
     restart: on-failure
-    command: [ "sh", "/service/service" ]
+    command: [ "vault", "server", "-config=/config/vault.hcl" ]
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200
       - VAULT_LOG_LEVEL=debug
