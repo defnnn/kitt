@@ -18,4 +18,4 @@ unseal:
 	@pyinfra @local scripts/unseal.py
 
 api-tunnel:
-	socat TCP4-LISTEN:8888,fork TCP4:traefik-kitt.$(KITT_DOMAIN):80
+	set -a; . .env; set +a; socat TCP4-LISTEN:8888,fork TCP4:traefik-kitt.$${KITT_DOMAIN}:80

@@ -61,20 +61,6 @@ services:
       - "traefik.http.routers.domains.tls.certresolver=le"
       - "traefik.http.routers.domains.tls.domains[0].main=traefik-kitt.${KITT_DOMAIN}"
       - "traefik.http.routers.domains.tls.domains[0].sans=vault.${KITT_DOMAIN},consul.${KITT_DOMAIN}"
-  cloudflared:
-    image: letfn/cloudflared
-    restart: always
-    volumes:
-      - cloudflared:/etc/cloudflared
-    environment:
-        - TUNNEL_URL=http://${KITT_TUNNEL_URL}
-        - TUNNEL_HOSTNAME=${KITT_TUNNEL_HOSTNAME}
-    depends_on:
-      - traefik
-      - consul
-    dns:
-      - 1.1.1.1
-      - 1.0.0.1
   consul:
     image: consul:1.8.0
     hostname: kitt-consul
@@ -131,7 +117,6 @@ services:
 
 volumes:
   traefik:
-  cloudflared:
   consul:
   consul_config:
   vault_config:
