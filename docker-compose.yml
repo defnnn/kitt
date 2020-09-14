@@ -15,7 +15,7 @@ services:
       - --certificatesResolvers.le.acme.dnschallenge=true
       - --certificatesResolvers.le.acme.dnsChallenge.provider=cloudflare
       - --certificatesResolvers.le.acme.email=${CF_API_EMAIL}
-      - --certificatesResolvers.le.acme.storage=${KITT_ACME_STORAGE:-/etc/traefik/acme/acme.json}
+      - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesResolvers.le.acme.dnschallenge.delaybeforecheck=0
       - --certificatesResolvers.le.acme.dnschallenge.resolvers=1.1.1.1
       - --entrypoints.https.address=:443
@@ -35,8 +35,6 @@ services:
       - 1.1.1.1
       - 1.0.0.1
     ports:
-      - ${KITT_IP}:2222:2222
-      - ${KITT_IP}:1194:1194
       - ${KITT_IP}:80:80
       - ${KITT_IP}:443:443
     labels:
