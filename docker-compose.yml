@@ -7,16 +7,9 @@ services:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.usebindportip=false
-      - --providers.consulcatalog=false
-      - --providers.consulcatalog.exposedbydefault=false
-      - --providers.consulcatalog.endpoint.address=${KITT_IP}:8500
-      - --providers.consulcatalog.endpoint.datacenter=dc1
-      - --providers.consulcatalog.endpoint.token=${CONSUL_HTTP_TOKEN}
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
-      - --entrypoints.ssh.address=:2222
-      - --entrypoints.openvpn.address=:1194
       - --entrypoints.http.address=:80
       - --entrypoints.http.proxyprotocol.insecure
       - --certificatesResolvers.le.acme.dnschallenge=true
@@ -50,15 +43,14 @@ services:
       - "id=traefik"
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-api.entrypoints=http,https"
-      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik{domain:.+}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik.{domain:.+}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
       - "traefik.http.routers.traefik-dash.entrypoints=http,https"
-      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik{domain:.+}`)"
+      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
       - "traefik.http.routers.domains.tls=true"
       - "traefik.http.routers.domains.tls.certresolver=le"
-      - "traefik.http.routers.domains.tls.domains[0].main=traefik-kitt.${KITT_DOMAIN}"
-      - "traefik.http.routers.domains.tls.domains[0].sans=vault.${KITT_DOMAIN},consul.${KITT_DOMAIN}"
+      - "traefik.http.routers.domains.tls.domains[0].main=traefik.${KITT_DOMAIN}"
 
 volumes:
   traefik:
