@@ -30,7 +30,7 @@ services:
       - CF_ZONE_API_TOKEN
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - traefik:/etc/traefik
+      - ./etc/traefik:/etc/traefik
     dns:
       - 1.1.1.1
       - 1.0.0.1

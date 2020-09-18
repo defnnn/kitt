@@ -7,5 +7,10 @@ setup:
 	docker-compose rm -f -s
 	docker-compose up -d --remove-orphans
 
-api-tunnel:
-	set -a; . .env; set +a; socat TCP4-LISTEN:8888,fork TCP4:traefik.$${KITT_DOMAIN}:80
+restore:
+	set -a; source .env; set +a; $(MAKE) restore-inner
+
+restore-inner:
+	mkdir -p etc/traefik/acme
+	pass kitt/defn.jp/acme.json | base64 -d > etc/traefik/acme/acme.json
+	chmod 0600 etc/traefik/acme/acme.json
