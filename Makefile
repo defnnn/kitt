@@ -12,5 +12,5 @@ restore:
 
 restore-inner:
 	mkdir -p etc/traefik/acme
-	pass kitt/defn.jp/acme.json | base64 -d > etc/traefik/acme/acme.json
+	pass kitt/$(KITT_DOMAIN)/acme.json | base64 -d > etc/traefik/acme/acme.json
 	chmod 0600 etc/traefik/acme/acme.json
