@@ -12,7 +12,6 @@ services:
       - --accesslog=true
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --entrypoints.http.address=:80
-      - --entrypoints.http.http.middlewares=traefik-forward-auth
       - --entrypoints.http.http.redirections.entryPoint.to=https
       - --entrypoints.http.http.redirections.entrypoint.permanent=false
       - --entrypoints.http.proxyprotocol.insecure
