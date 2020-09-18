@@ -5,11 +5,11 @@ menu:
 
 clean:
 	docker network rm kitt || true
-	sudo ip link del dummy0
+	sudo ip link del dummy0 || true
 
 setup:
 	$(MAKE) clean
-	$(MAKE) network
+	$(MAKE) network || true
 	$(MAKE) dummy
 
 kitt:
