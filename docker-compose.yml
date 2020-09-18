@@ -10,45 +10,30 @@ services:
       - --serverstransport.insecureskipverify=true
       - --log.level=DEBUG
       - --accesslog=true
-      - --entrypoints.http.address=:80
-      - --entrypoints.http.proxyprotocol.insecure
-      - --certificatesResolvers.le.acme.dnschallenge=true
-      - --certificatesResolvers.le.acme.dnsChallenge.provider=cloudflare
-      - --certificatesResolvers.le.acme.email=${CF_API_EMAIL}
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
-      - --certificatesResolvers.le.acme.dnschallenge.delaybeforecheck=0
-      - --certificatesResolvers.le.acme.dnschallenge.resolvers=1.1.1.1
       - --entrypoints.https.address=:443
       - --entrypoints.https.proxyprotocol.insecure
       - --entrypoints.https.http.tls.certResolver=le
-      - --providers.file.directory=/etc/traefik/conf.d
-      - --providers.file.watch=true
       - --api.dashboard
       - --api
-    environment:
-      - CF_DNS_API_TOKEN
-      - CF_ZONE_API_TOKEN
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./etc/traefik:/etc/traefik
-    dns:
-      - 1.1.1.1
-      - 1.0.0.1
     ports:
-      - ${KITT_IP}:80:80
       - ${KITT_IP}:443:443
     labels:
       - "id=traefik"
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-api.entrypoints=http,https"
+      - "traefik.http.routers.traefik-api.entrypoints=https"
       - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik.{domain:.+}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
-      - "traefik.http.routers.traefik-dash.entrypoints=http,https"
+      - "traefik.http.routers.traefik-dash.entrypoints=https"
       - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
       - "traefik.http.routers.domains.tls=true"
       - "traefik.http.routers.domains.tls.certresolver=le"
-      - "traefik.http.routers.domains.tls.domains[0].main=traefik.${KITT_DOMAIN}"
+      - "traefik.http.routers.domains.tls.domains[0].main=${KITT_DOMAIN}"
+      - "traefik.http.routers.domains.tls.domains[0].sans=*.${KITT_DOMAIN}"
 
 volumes:
   traefik:

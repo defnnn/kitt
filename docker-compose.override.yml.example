@@ -1,7 +1,0 @@
-version: '3.7'
-
-services:
-  traefik:
-    labels:
-      - "traefik.http.routers.domains.tls.domains[1].main=${KITT_DOMAIN}"
-      - "traefik.http.routers.domains.tls.domains[1].sans=*.${KITT_DOMAIN}"
