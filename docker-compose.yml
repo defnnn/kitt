@@ -30,10 +30,6 @@ services:
       - "traefik.http.routers.traefik-dash.entrypoints=https"
       - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.{domain:.+}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
-      - "traefik.http.routers.traefik.tls=true"
-      - "traefik.http.routers.traefik.tls.certresolver=le"
-      - "traefik.http.routers.traefik.tls.domains[0].main=${KITT_DOMAIN}"
-      - "traefik.http.routers.traefik.tls.domains[0].sans=*.${KITT_DOMAIN}"
 
 volumes:
   traefik:
