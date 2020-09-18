@@ -11,6 +11,8 @@ services:
       - --log.level=DEBUG
       - --accesslog=true
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
+      - --entrypoints.http.address=:80
+      - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.https.address=:443
       - --entrypoints.https.proxyprotocol.insecure
       - --entrypoints.https.http.tls.certResolver=le
