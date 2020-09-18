@@ -12,8 +12,10 @@ services:
       - --accesslog=true
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --entrypoints.http.address=:80
+      - --entrypoints.http.http.middlewares=traefik-forward-auth
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.https.address=:443
+      - --entrypoints.https.http.middlewares=traefik-forward-auth
       - --entrypoints.https.proxyprotocol.insecure
       - --entrypoints.https.http.tls.certResolver=le
       - --api.dashboard
@@ -28,11 +30,49 @@ services:
       - "id=traefik"
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-api.entrypoints=https"
-      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik.{domain:.+}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik.${KITT_DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
       - "traefik.http.routers.traefik-dash.entrypoints=https"
-      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.{domain:.+}`)"
+      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
+
+  whodis:
+    image: containous/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whodis.entrypoints=http,https"
+      - "traefik.http.routers.whodis.rule=Host(`whodis.${KITT_DOMAIN}`)"
+
+  whoami:
+    image: containous/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.entrypoints=http,https"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.${KITT_DOMAIN}`)"
+
+  traefik-forward-auth:
+    image: thomseddon/traefik-forward-auth:2
+    command: [ "--match-whitelist-or-domain" ]
+    environment:
+      - DEFAULT_ACTION=auth
+      - DEFAULT_PROVIDER=generic-oauth
+      - PROVIDERS_GENERIC_OAUTH_AUTH_URL=https://github.com/login/oauth/authorize
+      - PROVIDERS_GENERIC_OAUTH_TOKEN_URL=https://github.com/login/oauth/access_token
+      - PROVIDERS_GENERIC_OAUTH_USER_URL=https://api.github.com/user
+      - PROVIDERS_GENERIC_OAUTH_CLIENT_ID=${KITT_CLIENT_ID}
+      - PROVIDERS_GENERIC_OAUTH_CLIENT_SECRET=${KITT_CLIENT_SECRET}
+      - SECRET=${KITT_SECRET}
+      - COOKIE_DOMAIN=${KITT_DOMAIN}
+      - AUTH_HOST=auth.${KITT_DOMAIN}
+      - LOG_LEVEL=debug
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik-forward-auth.entrypoints=http,https"
+      - "traefik.http.routers.traefik-forward-auth.rule=Host(`auth.${KITT_DOMAIN}`)"
+      - "traefik.http.routers.traefik-forward-auth.middlewares=traefik-forward-auth"
+      - "traefik.http.services.traefik-forward-auth.loadbalancer.server.port=4181"
+      - "traefik.http.middlewares.traefik-forward-auth.forwardauth.address=http://traefik-forward-auth:4181"
+      - "traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders=X-Forwarded-User"
 
 volumes:
   traefik:
