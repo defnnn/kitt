@@ -13,6 +13,8 @@ services:
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --entrypoints.http.address=:80
       - --entrypoints.http.http.middlewares=traefik-forward-auth
+      - --entrypoints.http.http.redirections.entryPoint.to=https
+      - --entrypoints.http.http.redirections.entrypoint.permanent=false
       - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.https.address=:443
       - --entrypoints.https.http.middlewares=traefik-forward-auth
@@ -36,20 +38,6 @@ services:
       - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
 
-  whodis:
-    image: containous/whoami
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whodis.entrypoints=http,https"
-      - "traefik.http.routers.whodis.rule=Host(`whodis.${KITT_DOMAIN}`)"
-
-  whoami:
-    image: containous/whoami
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whoami.entrypoints=http,https"
-      - "traefik.http.routers.whoami.rule=Host(`whoami.${KITT_DOMAIN}`)"
-
   traefik-forward-auth:
     image: thomseddon/traefik-forward-auth:2
     command: [ "--match-whitelist-or-domain" ]
@@ -67,7 +55,7 @@ services:
       - LOG_LEVEL=debug
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-forward-auth.entrypoints=http,https"
+      - "traefik.http.routers.traefik-forward-auth.entrypoints=https"
       - "traefik.http.routers.traefik-forward-auth.rule=Host(`auth.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-forward-auth.middlewares=traefik-forward-auth"
       - "traefik.http.services.traefik-forward-auth.loadbalancer.server.port=4181"
