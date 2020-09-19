@@ -12,6 +12,7 @@ services:
       - --accesslog=true
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --entrypoints.kuma-api.address=:5681
+      - --entrypoints.kuma-api.http.middlewares=traefik-forward-auth
       - --entrypoints.http-proxy.address=:8888
       - --entrypoints.http.address=:80
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -29,7 +30,6 @@ services:
     ports:
       - ${KITT_IP}:5681:5681
       - ${KITT_IP}:443:443
-      - ${KITT_IP}:80:80
     labels:
       - "id=traefik"
       - "traefik.enable=true"
@@ -89,13 +89,17 @@ services:
     entrypoint: [ "kuma-cp", "run" ]
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.kuma-api.entrypoints=kuma-api,https"
+      - "traefik.http.routers.kuma-api-redir.entrypoints=https"
+      - "traefik.http.routers.kuma-api-redir.rule=Host(`kuma.${KITT_DOMAIN}`)"
+      - "traefik.http.routers.kuma-api-redir.service=kuma-api-redir"
+      - "traefik.http.services.kuma-api-redir.loadbalancer.server.port=5681"
+      - "traefik.http.routers.kuma-api-redir.middlewares=kuma-http@docker"
+      - "traefik.http.middlewares.kuma-http.redirectregex.regex=^https://kuma.${KITT_DOMAIN}/(.*)"
+      - "traefik.http.middlewares.kuma-http.redirectregex.replacement=http://kuma.${KITT_DOMAIN}:5681/$${1}"
+      - "traefik.http.routers.kuma-api.entrypoints=kuma-api"
       - "traefik.http.routers.kuma-api.rule=Host(`kuma.${KITT_DOMAIN}`)"
       - "traefik.http.routers.kuma-api.service=kuma-api"
       - "traefik.http.services.kuma-api.loadbalancer.server.port=5681"
-      - "traefik.http.middlewares.kuma-http.redirectregex.regex=^https://kuma.${KITT_DOMAIN}/(.*)"
-      - "traefik.http.middlewares.kuma-http.redirectregex.replacement=http://kuma.${KITT_DOMAIN}:5681/$${1}"
-      - "traefik.http.routers.kuma-api.middlewares=kuma-http@docker"
     env_file: .env
 
   kuard:

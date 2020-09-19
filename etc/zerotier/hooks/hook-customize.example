@@ -4,8 +4,7 @@ function main {
   if [[ -n "${ZT_DEST:-}" ]]; then
     socat tcp4-listen:80,reuseaddr,fork "TCP:${ZT_DEST}:80" &
     socat tcp4-listen:443,reuseaddr,fork "TCP:${ZT_DEST}:443" &
-
-    socat tcp4-listen:5681,reuseaddr,fork "TCP:kuma:5681" &
+    socat tcp4-listen:5681,reuseaddr,fork "TCP:${ZT_DEST}:5681" &
   fi
 }
 
