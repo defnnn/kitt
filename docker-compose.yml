@@ -61,6 +61,20 @@ services:
       - "traefik.http.middlewares.traefik-forward-auth.forwardauth.address=http://traefik-forward-auth:4181"
       - "traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders=X-Forwarded-User"
 
+  zerotier:
+    image: letfn/zerotier
+    volumes:
+      - ./etc/zerotier/zerotier-one:/var/lib/zerotier-one
+      - ./etc/zerotier/hooks:/service.d
+    cap_drop:
+      - NET_RAW
+      - NET_ADMIN
+      - SYS_ADMIN
+    devices:
+      - /dev/net/tun
+    privileged: true
+    env_file: .env
+
 volumes:
   traefik:
 

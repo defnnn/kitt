@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+function main {
+  if [[ -n "${ZT_DEST:-}" ]]; then
+    socat tcp4-listen:443,reuseaddr,fork "TCP:${ZT_DEST}:443" &
+  fi
+}
+
+main "$@"
