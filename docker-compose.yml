@@ -26,6 +26,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./etc/traefik:/etc/traefik
+    ports:
+      - ${KITT_IP}:5681:5681
+      - ${KITT_IP}:443:443
     labels:
       - "id=traefik"
       - "traefik.enable=true"
