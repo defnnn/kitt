@@ -12,7 +12,6 @@ services:
       - --accesslog=true
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --entrypoints.kuma-api.address=:5681
-      - --entrypoints.kuma-api.http.middlewares=traefik-forward-auth
       - --entrypoints.http-proxy.address=:8888
       - --entrypoints.http.address=:80
       - --entrypoints.http.http.redirections.entryPoint.to=https
