@@ -11,6 +11,7 @@ services:
       - --log.level=DEBUG
       - --accesslog=true
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
+      - --entrypoints.http-proxy.address=:8888
       - --entrypoints.http.address=:80
       - --entrypoints.http.http.redirections.entryPoint.to=https
       - --entrypoints.http.http.redirections.entrypoint.permanent=false
@@ -73,6 +74,12 @@ services:
     devices:
       - /dev/net/tun
     privileged: true
+    env_file: .env
+
+  cloudflared:
+    image: letfn/cloudflared
+    volumes:
+      - ./etc/cloudflared:/etc/cloudflared
     env_file: .env
 
 volumes:
