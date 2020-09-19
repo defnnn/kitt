@@ -15,7 +15,6 @@ clean:
 setup:
 	$(MAKE) clean
 	$(MAKE) network || true
-	$(MAKE) dummy
 	$(MAKE) build
 
 build:
