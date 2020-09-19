@@ -82,6 +82,46 @@ services:
       - ./etc/cloudflared:/etc/cloudflared
     env_file: .env
 
+  kuma:
+    build: b/kuma
+    entrypoint: [ "kuma-cp", "run" ]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kuma-web.entrypoints=http,https"
+      - "traefik.http.routers.kuma-web.rule=Host(`kuma.${KITT_DOMAIN}`)"
+      - "traefik.http.routers.kuma-web.service=kuma-web"
+      - "traefik.http.services.kuma-web.loadbalancer.server.port=5681"
+      - "traefik.http.middlewares.kuma-http.redirectregex.regex=^https://kuma.${KITT_DOMAIN}/(.*)"
+      - "traefik.http.middlewares.kuma-http.redirectregex.replacement=http://kuma.${KITT_DOMAIN}/$${1}"
+      - "traefik.http.routers.kuma-web.middlewares=kuma-http@docker"
+    env_file: .env
+
+  kuard:
+    image: gcr.io/kuar-demo/kuard-amd64:blue
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.kuard.entrypoints=https"
+      - "traefik.http.routers.kuard.rule=Host(`kuard.${KITT_DOMAIN}`)"
+      - "traefik.http.services.kuard.loadbalancer.server.port=8080"
+
+  whodis:
+    image: containous/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whodis.entrypoints=https"
+      - "traefik.http.routers.whodis.rule=Host(`whodis.${KITT_DOMAIN}`)"
+      - "traefik.http.routers.this.entrypoints=http-proxy"
+      - "traefik.http.routers.this.rule=Host(`this.${KITT_DOMAIN}`)"
+
+  whodat:
+    image: containous/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whodat.entrypoints=https"
+      - "traefik.http.routers.whodat.rule=Host(`whodat.${KITT_DOMAIN}`)"
+      - "traefik.http.routers.that.entrypoints=http-proxy"
+      - "traefik.http.routers.that.rule=Host(`that.${KITT_DOMAIN}`)"
+
 volumes:
   traefik:
 
