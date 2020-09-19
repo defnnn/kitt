@@ -27,6 +27,7 @@ restore-inner:
 	pass kitt/$(KITT_DOMAIN)/identity.public | perl -pe 's{\s*$$}{}' > etc/zerotier/zerotier-one/identity.public
 	pass kitt/$(KITT_DOMAIN)/identity.secret | perl -pe 's{\s*$$}{}' > etc/zerotier/zerotier-one/identity.secret
 	pass kitt/$(KITT_DOMAIN)/hook-start | base64 -d > etc/zerotier/hooks/hook-start
+	pass kitt/$(KITT_DOMAIN)/cert.pem | base64 -d > etc/cloudflared/cert.pem
 
 network:
 	docker network create kitt
