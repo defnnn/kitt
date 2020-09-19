@@ -43,5 +43,6 @@ restore-inner:
 	pass kitt/$(KITT_DOMAIN)/identity.public | base64 -d | perl -pe 's{\s*$$}{}' > etc/zerotier/zerotier-one/identity.public
 	pass kitt/$(KITT_DOMAIN)/identity.secret | base64 -d | perl -pe 's{\s*$$}{}' > etc/zerotier/zerotier-one/identity.secret
 	pass kitt/$(KITT_DOMAIN)/hook-customize| base64 -d > etc/zerotier/hooks/hook-customize
+	chmod 755 etc/zerotier/hooks/hook-customize
 	pass kitt/$(KITT_DOMAIN)/cert.pem | base64 -d > etc/cloudflared/cert.pem
 	pass kitt/$(KITT_DOMAIN)/env | base64 -d > .env
