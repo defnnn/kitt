@@ -29,6 +29,7 @@ services:
     ports:
       - ${KITT_IP}:5681:5681
       - ${KITT_IP}:443:443
+      - ${KITT_IP}:80:80
     labels:
       - "id=traefik"
       - "traefik.enable=true"
