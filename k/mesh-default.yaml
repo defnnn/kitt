@@ -1,2 +1,7 @@
 type: Mesh
 name: default
+metrics:
+  enabledBackend: prom-1
+  backends:
+    - name: prom-1
+      type: prometheus
