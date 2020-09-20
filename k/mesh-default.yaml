@@ -1,7 +1,7 @@
 type: Mesh
 name: default
-metrics:
-  enabledBackend: prom-1
+mtls:
+  enabledBackend: ca-1
   backends:
-    - name: prom-1
-      type: prometheus
+    - name: ca-1
+      type: builtin
