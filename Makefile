@@ -6,6 +6,7 @@ menu:
 kitt:
 	$(MAKE) setup
 	$(MAKE) up
+	$(MAKE) kumactl
 
 clean:
 	docker-compose down
@@ -44,3 +45,7 @@ restore-inner:
 	chmod 755 etc/zerotier/hooks/hook-customize
 	pass kitt/$(KITT_DOMAIN)/cert.pem | base64 -d > etc/cloudflared/cert.pem
 	pass kitt/$(KITT_DOMAIN)/env | base64 -d > .env
+
+kumactl:
+	kumactl config control-planes add --address http://169.254.32.1:5681 --name kitt --overwrite
+	kumactl config control-planes switch --name kitt
