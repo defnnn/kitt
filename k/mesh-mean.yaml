@@ -1,0 +1,12 @@
+type: Mesh
+name: mean
+mtls:
+  enabledBackend: ca-1
+  backends:
+    - name: ca-1
+      type: builtin
+metrics:
+  enabledBackend: prom-1
+  backends:
+    - name: prom-1
+      type: prometheus
