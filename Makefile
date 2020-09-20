@@ -10,10 +10,8 @@ kitt:
 clean:
 	docker-compose down
 	docker network rm kitt || true
-	sudo ip link del dummy0 || true
 
 setup:
-	$(MAKE) clean
 	$(MAKE) network || true
 	$(MAKE) build
 
