@@ -7,6 +7,8 @@ kitt:
 	$(MAKE) setup
 	$(MAKE) up
 	$(MAKE) kumactl
+	kumactl apply -f k/traffic-permission-allow-all-traffic.yaml
+	kumactl apply -f k/mesh-default.yaml
 
 clean:
 	docker-compose down
