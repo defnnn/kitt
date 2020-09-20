@@ -59,5 +59,5 @@ restore-diff-inner:
 	pdiff kitt/$(KITT_DOMAIN)/env .env
 
 kumactl:
-	kumactl config control-planes add --address http://169.254.32.1:5681 --name kitt --overwrite
+	kumactl config control-planes add --address http://10.88.88.88:5681 --name kitt --overwrite
 	kumactl config control-planes switch --name kitt
