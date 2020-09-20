@@ -85,6 +85,9 @@ services:
   kuma:
     build: b/kuma
     entrypoint: [ "kuma-cp", "run" ]
+    ports:
+      - ${KITT_IP}:5681:5681
+      - ${KITT_IP}:5685:5685
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.kuma-api-redir.entrypoints=https"
