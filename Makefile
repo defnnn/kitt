@@ -6,9 +6,6 @@ menu:
 kitt:
 	$(MAKE) setup
 	$(MAKE) up
-	$(MAKE) kumactl
-	kumactl apply -f k/traffic-permission-allow-all-traffic.yaml
-	kumactl apply -f k/mesh-default.yaml
 
 clean:
 	docker-compose down
@@ -59,6 +56,11 @@ restore-diff-inner:
 	pdiff kitt/$(KITT_DOMAIN)/hook-customize etc/zerotier/hooks/hook-customize
 	pdiff kitt/$(KITT_DOMAIN)/cert.pem etc/cloudflared/cert.pem
 	pdiff kitt/$(KITT_DOMAIN)/env .env
+
+kuma:
+	$(MAKE) kumactl
+	kumactl apply -f k/traffic-permission-allow-all-traffic.yaml
+	kumactl apply -f k/mesh-default.yaml
 
 kumactl:
 	kumactl config control-planes add --address http://10.88.88.88:5681 --name kitt --overwrite
