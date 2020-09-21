@@ -9,7 +9,6 @@ kitt:
 
 clean:
 	docker-compose down
-	docker network rm kitt || true
 
 setup:
 	$(MAKE) network || true
@@ -19,8 +18,8 @@ build:
 	docker-compose build
 
 network:
-	docker network create kitt
-
+	docker network create kitt || true
+	docker network create --subnet 172.25.0.0/16 --ip-range 172.25.1.0/24 kind || true
 dummy:
 	sudo ip link add dummy0 type dummy || true
 	sudo ip addr add 169.254.32.1/32 dev dummy0 || true
