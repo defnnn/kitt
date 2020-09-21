@@ -97,6 +97,8 @@ services:
       - "traefik.http.routers.kuma-api.service=kuma-api"
       - "traefik.http.services.kuma-api.loadbalancer.server.port=5681"
     env_file: .env
+    environment:
+      KUMA_MODE: global
 
   kuard:
     image: gcr.io/kuar-demo/kuard-amd64:blue
