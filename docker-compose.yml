@@ -8,7 +8,7 @@ services:
       - --providers.docker.exposedbydefault=false
       - --providers.docker.usebindportip=false
       - --serverstransport.insecureskipverify=true
-      - --log.level=DEBUG
+      - --log.level=TRACE
       - --accesslog=true
       - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --entrypoints.kuma-api.address=:5681
