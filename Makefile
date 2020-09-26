@@ -6,6 +6,7 @@ menu:
 thing:
 	$(MAKE) setup
 	$(MAKE) up
+	sleep 10
 	$(MAKE) kuma
 
 clean:
@@ -65,5 +66,5 @@ kuma:
 	kumactl apply -f k/mesh-default.yaml
 
 kumactl:
-	kumactl config control-planes add --address http://10.88.88.88:5681 --name kitt --overwrite
+	kumactl config control-planes add --address http://169.254.32.1:5681 --name kitt --overwrite
 	kumactl config control-planes switch --name kitt
