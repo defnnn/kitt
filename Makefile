@@ -6,7 +6,7 @@ menu:
 thing:
 	$(MAKE) setup
 	$(MAKE) up
-	sudo rsync -ia work/kuma/bin/. /usr/local/bin/.
+	sudo rsync -ia ~/work/kuma/bin/. /usr/local/bin/.
 	sleep 10
 	$(MAKE) kuma
 
