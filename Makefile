@@ -66,5 +66,5 @@ kuma:
 	kumactl apply -f k/mesh-default.yaml
 
 kumactl:
-	kumactl config control-planes add --address http://169.254.32.1:5681 --name kitt --overwrite
+	kumactl config control-planes add --address http://$(shell docker inspect kitt_kuma_1 | jq -r '.[].NetworkSettings.Networks.kind.IPAddress'):5681 --name kitt --overwrite
 	kumactl config control-planes switch --name kitt
