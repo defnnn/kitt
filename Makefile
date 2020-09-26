@@ -6,6 +6,7 @@ menu:
 thing:
 	$(MAKE) setup
 	$(MAKE) up
+	$(MAKE) kuma
 
 clean:
 	docker-compose down
