@@ -15,19 +15,18 @@ services:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.usebindportip=false
-      - --serverstransport.insecureskipverify=true
-      - --log.level=TRACE
-      - --accesslog=true
-      - --entrypoints.http-proxy.address=:8888
       - --entrypoints.http.address=:80
+      - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.http.http.redirections.entryPoint.to=https
       - --entrypoints.http.http.redirections.entrypoint.permanent=false
-      - --entrypoints.http.proxyprotocol.insecure
       - --entrypoints.https.address=:443
-      - --entrypoints.https.http.middlewares=traefik-forward-auth
       - --entrypoints.https.proxyprotocol.insecure
+      - --entrypoints.https.http.middlewares=traefik-forward-auth
       - --api.dashboard
       - --api
+      - --serverstransport.insecureskipverify=true
+      - --log.level=DEBUG
+      - --accesslog=true
     networks:
       default:
         ipv4_address: ${KITT_NETWORK_PREFIX}.100
@@ -37,10 +36,10 @@ services:
       - "id=traefik"
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-api.entrypoints=https"
-      - "traefik.http.routers.traefik-api.rule=HostRegexp(`traefik.${KITT_DOMAIN}`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.traefik-api.rule=Host(`traefik.${KITT_DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
       - "traefik.http.routers.traefik-dash.entrypoints=https"
-      - "traefik.http.routers.traefik-dash.rule=HostRegexp(`traefik.${KITT_DOMAIN}`)"
+      - "traefik.http.routers.traefik-dash.rule=Host(`traefik.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
 
   traefik-forward-auth:
@@ -68,6 +67,21 @@ services:
       - "traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders=X-Forwarded-User"
     depends_on:
       - traefik
+
+  kuard:
+    image: gcr.io/kuar-demo/kuard-amd64:blue
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.entrypoints=https"
+      - "traefik.http.routers.kuard.rule=HostRegexp(`kuard.${KITT_DOMAIN}`)"
+      - "traefik.http.services.kuard.loadbalancer.server.port=8080"
+
+  whoami:
+    image: containous/whoami
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.entrypoints=https"
+      - "traefik.http.routers.whoami.rule=Host(`whoami.${KITT_DOMAIN}`)"
 
 networks:
   default:
