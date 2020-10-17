@@ -28,6 +28,9 @@ services:
       - --entrypoints.https.proxyprotocol.insecure
       - --api.dashboard
       - --api
+    networks:
+      default:
+        ipv4_address: ${KITT_NETWORK_PREFIX}.100
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
@@ -70,7 +73,6 @@ networks:
   default:
     driver: cilium
     ipam:
-      driver: default
       config:
         - subnet: ${KITT_NETWORK}
 
