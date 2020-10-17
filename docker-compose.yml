@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   traefik:
-    image: "traefik:v2.3.0"
+    image: "traefik:v2.3.1"
     command:
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
@@ -10,8 +10,6 @@ services:
       - --serverstransport.insecureskipverify=true
       - --log.level=TRACE
       - --accesslog=true
-      - --certificatesResolvers.le.acme.storage=/etc/traefik/acme/acme.json
-      - --entrypoints.kuma-api.address=:5681
       - --entrypoints.http-proxy.address=:8888
       - --entrypoints.http.address=:80
       - --entrypoints.http.http.redirections.entryPoint.to=https
@@ -20,12 +18,13 @@ services:
       - --entrypoints.https.address=:443
       - --entrypoints.https.http.middlewares=traefik-forward-auth
       - --entrypoints.https.proxyprotocol.insecure
-      - --entrypoints.https.http.tls.certResolver=le
       - --api.dashboard
       - --api
+    networks:
+      default:
+        ipv4_address: ${KITT_NETWORK_PREFIX}.100
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./etc/traefik:/etc/traefik
     labels:
       - "id=traefik"
       - "traefik.enable=true"
@@ -59,77 +58,14 @@ services:
       - "traefik.http.services.traefik-forward-auth.loadbalancer.server.port=4181"
       - "traefik.http.middlewares.traefik-forward-auth.forwardauth.address=http://traefik-forward-auth:4181"
       - "traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders=X-Forwarded-User"
-
-  zerotier:
-    image: letfn/zerotier
-    volumes:
-      - ./etc/zerotier/zerotier-one:/var/lib/zerotier-one
-      - ./etc/zerotier/hooks:/service.d
-    cap_drop:
-      - NET_RAW
-      - NET_ADMIN
-      - SYS_ADMIN
-    devices:
-      - /dev/net/tun
-    privileged: true
-    env_file: .env
-
-  cloudflared:
-    image: letfn/cloudflared
-    volumes:
-      - ./etc/cloudflared:/etc/cloudflared
-    env_file: .env
-
-  kuma:
-    build: b/kuma
-    entrypoint: [ "kuma-cp", "run" ]
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.kuma-api-redir.entrypoints=https"
-      - "traefik.http.routers.kuma-api-redir.rule=Host(`kuma.${KITT_DOMAIN}`)"
-      - "traefik.http.routers.kuma-api-redir.service=kuma-api-redir"
-      - "traefik.http.services.kuma-api-redir.loadbalancer.server.port=5681"
-      - "traefik.http.routers.kuma-api-redir.middlewares=kuma-http@docker"
-      - "traefik.http.middlewares.kuma-http.redirectregex.regex=^https://kuma.${KITT_DOMAIN}/(.*)"
-      - "traefik.http.middlewares.kuma-http.redirectregex.replacement=http://kuma.${KITT_DOMAIN}:5681/$${1}"
-      - "traefik.http.routers.kuma-api.entrypoints=kuma-api"
-      - "traefik.http.routers.kuma-api.rule=Host(`kuma.${KITT_DOMAIN}`)"
-      - "traefik.http.routers.kuma-api.service=kuma-api"
-      - "traefik.http.services.kuma-api.loadbalancer.server.port=5681"
-    env_file: .env
-    environment:
-      KUMA_MODE: global
-
-  kuard:
-    image: gcr.io/kuar-demo/kuard-amd64:blue
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.kuard.entrypoints=https"
-      - "traefik.http.routers.kuard.rule=Host(`kuard.${KITT_DOMAIN}`)"
-      - "traefik.http.services.kuard.loadbalancer.server.port=8080"
-
-  whodis:
-    image: containous/whoami
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whodis.entrypoints=https"
-      - "traefik.http.routers.whodis.rule=Host(`whodis.${KITT_DOMAIN}`)"
-      - "traefik.http.routers.this.entrypoints=http-proxy"
-      - "traefik.http.routers.this.rule=Host(`this.${KITT_DOMAIN}`)"
-
-  whodat:
-    image: containous/whoami
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.whodat.entrypoints=https"
-      - "traefik.http.routers.whodat.rule=Host(`whodat.${KITT_DOMAIN}`)"
-      - "traefik.http.routers.that.entrypoints=http-proxy"
-      - "traefik.http.routers.that.rule=Host(`that.${KITT_DOMAIN}`)"
-
-volumes:
-  traefik:
+    depends_on:
+      - traefik
 
 networks:
   default:
-    external:
-      name: kind
+    driver: cilium
+    ipam:
+      driver: default
+      config:
+        - subnet: ${KITT_NETWORK}
+
