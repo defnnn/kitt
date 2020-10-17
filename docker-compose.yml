@@ -2,9 +2,6 @@ version: '3.7'
 
 services:
   zerotier:
-    networks:
-      default:
-        ipv4_address: ${KITT_NETWORK_PREFIX}.100
     cap_drop:
     - NET_RAW
     - NET_ADMIN

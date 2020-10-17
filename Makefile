@@ -8,8 +8,10 @@ clean:
 
 setup:
 	$(MAKE) network || true
+	$(MAKE) up
 
 network:
+	sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 	. .env && sudo route add -net "$${KITT_NETWORK}" cilium_host
 
 up:

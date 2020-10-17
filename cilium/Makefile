@@ -4,8 +4,15 @@ menu:
 	@perl -ne 'printf("%10s: %s\n","$$1","$$2") if m{^([\w+-]+):[^#]+#\s(.+)$$}' Makefile
 
 setup:
-	$(MAKE) once
+	$(MAKE) once up
+
+recreate:
+	$(MAKE) down up
+
+down:
 	docker-compose down --remove-orphans
+
+up:
 	docker-compose up -d --remove-orphans
 
 once:
