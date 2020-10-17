@@ -35,9 +35,11 @@ services:
     labels:
       - "id=traefik"
       - "traefik.enable=true"
+      - "traefik.http.routers.traefik-api.tls=true"
       - "traefik.http.routers.traefik-api.entrypoints=https"
       - "traefik.http.routers.traefik-api.rule=Host(`traefik.${KITT_DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
+      - "traefik.http.routers.traefik-dash.tls=true"
       - "traefik.http.routers.traefik-dash.entrypoints=https"
       - "traefik.http.routers.traefik-dash.rule=Host(`traefik.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
@@ -59,6 +61,7 @@ services:
       - LOG_LEVEL=debug
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.traefik-forward-auth.tls=true"
       - "traefik.http.routers.traefik-forward-auth.entrypoints=https"
       - "traefik.http.routers.traefik-forward-auth.rule=Host(`auth.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-forward-auth.middlewares=traefik-forward-auth"
@@ -72,16 +75,19 @@ services:
     image: gcr.io/kuar-demo/kuard-amd64:blue
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.whoami.entrypoints=https"
-      - "traefik.http.routers.kuard.rule=HostRegexp(`kuard.${KITT_DOMAIN}`)"
+      - "traefik.http.routers.kuard.tls=true"
+      - "traefik.http.routers.kuard.entrypoints=https"
+      - "traefik.http.routers.kuard.rule=Host(`kuard.${KITT_DOMAIN}`)"
       - "traefik.http.services.kuard.loadbalancer.server.port=8080"
 
   whoami:
     image: containous/whoami
     labels:
       - "traefik.enable=true"
+      - "traefik.http.routers.whoami.tls=true"
       - "traefik.http.routers.whoami.entrypoints=https"
       - "traefik.http.routers.whoami.rule=Host(`whoami.${KITT_DOMAIN}`)"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
 
 networks:
   default:
