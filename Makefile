@@ -10,6 +10,9 @@ setup:
 	$(MAKE) network || true
 	$(MAKE) up
 
+watch:
+	./bin/dns-update
+
 network:
 	. .env && sudo route add -net "$${KITT_NETWORK}" cilium_host
 
