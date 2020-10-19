@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+function main {
+  docker events --filter 'type=container' | while read -r ts type action cid rest; do
+    echo "${type} ${action} ${cid} ${rest}"
+    case "${action}" in
+      start)
+        set -x
+        ip="$(docker inspect "${cid}" | jq -r '.[].NetworkSettings.Networks[].IPAddress')"
+        hostname="$(docker inspect "${cid}" | jq -r '.[].Config.Labels.dns')"
+        if [[ -n "${ip}" ]]; then
+          if [[ -n "${hostname}" ]]; then
+            cf -t A rm "${hostname}" || true
+            cf -t A add "${hostname}" "${ip}"
+          fi
+        fi
+        set +x
+        ;;
+    esac
+  done
+}
+
+main "$@"
