@@ -63,15 +63,6 @@ services:
     depends_on:
       - traefik
 
-  kuard:
-    image: gcr.io/kuar-demo/kuard-amd64:blue
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.kuard.tls=true"
-      - "traefik.http.routers.kuard.entrypoints=https"
-      - "traefik.http.routers.kuard.rule=Host(`kuard.${KITT_DOMAIN}`)"
-      - "traefik.http.services.kuard.loadbalancer.server.port=8080"
-
 networks:
   default:
     driver: cilium
