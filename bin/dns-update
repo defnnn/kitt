@@ -9,12 +9,17 @@ function main {
     case "${action}" in
       start)
         ip="$(docker inspect "${cid}" | jq -r '.[].NetworkSettings.Networks[].IPAddress')"
-        hostname="$(docker inspect "${cid}" | jq -r '.[].Config.Labels.dns')"
+        hostname="$(echo "$rest" | perl -pe 's{^\(}{}; s{\)$}{}; s{, }{\n}g' | grep ^dns= | cut -d= -f2-)"
         if [[ -n "${ip}" ]]; then
           if [[ -n "${hostname}" ]]; then
-            cf -t A rm "${hostname}" || true
-            cf -t A add "${hostname}" "${ip}"
+            cf -t A add "${hostname}" "${ip}" || cf -t A edit "${hostname}" "${ip}"
           fi
+        fi
+        ;;
+      destroy)
+        hostname="$(echo "$rest" | perl -pe 's{^\(}{}; s{\)$}{}; s{, }{\n}g' | grep ^dns= | cut -d= -f2-)"
+        if [[ -n "${hostname}" ]]; then
+          cf -t A rm "${hostname}"
         fi
         ;;
     esac
