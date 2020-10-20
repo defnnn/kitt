@@ -12,14 +12,9 @@ function main {
         hostname="$(echo "$rest" | perl -pe 's{^\(}{}; s{\)$}{}; s{, }{\n}g' | grep ^dns= | cut -d= -f2-)"
         if [[ -n "${ip}" ]]; then
           if [[ -n "${hostname}" ]]; then
-            cf -t A add "${hostname}" "${ip}" || cf -t A edit "${hostname}" "${ip}"
+            cf -t A rm "${hostname}"
+            cf -t A add "${hostname}" "${ip}"
           fi
-        fi
-        ;;
-      destroy)
-        hostname="$(echo "$rest" | perl -pe 's{^\(}{}; s{\)$}{}; s{, }{\n}g' | grep ^dns= | cut -d= -f2-)"
-        if [[ -n "${hostname}" ]]; then
-          cf -t A rm "${hostname}"
         fi
         ;;
     esac
