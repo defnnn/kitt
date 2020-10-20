@@ -24,4 +24,5 @@ status:
 	docker-compose exec cilium hubble status
 
 observe:
-	@docker-compose exec cilium hubble observe -f -j
+	@docker-compose exec cilium hubble observe -f -j --verdict FORWARDED \
+		|	while read -r a; do echo "$$a" | jq . | perl -pe 's{$$}{\r}'; echo; echo; echo; done

@@ -11,7 +11,7 @@ services:
     restart: always
     network_mode: "host"
   cilium:
-    image: docker.io/cilium/cilium:v1.9.0-rc1
+    image: docker.io/cilium/cilium:v1.9.0-rc2
     command: cilium-agent --kvstore consul --kvstore-opt consul.address=127.0.0.1:8500 -t vxlan --enable-ipv6=false --enable-hubble=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -28,7 +28,7 @@ services:
       - consul
     restart: always
   plugin:
-    image: docker.io/cilium/docker-plugin:v1.9.0-rc1
+    image: docker.io/cilium/docker-plugin:v1.9.0-rc2
     command: cilium-docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
