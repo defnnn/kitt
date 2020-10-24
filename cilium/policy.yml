@@ -54,7 +54,17 @@
 
 - labels:
     - key: name
-      value: test-health
+      value: host-to-health
+  endpointSelector:
+    matchLabels:
+      'reserved:health': ""
+  ingress:
+    - fromEntities:
+      - host
+
+- labels:
+    - key: name
+      value: health-to-health
   endpointSelector:
     matchLabels:
       'reserved:health': ""

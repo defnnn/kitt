@@ -36,3 +36,7 @@ status:
 observe:
 	@docker-compose exec cilium hubble observe -f -j --verdict FORWARDED \
 		|	while read -r a; do echo "$$a" | jq . | perl -pe 's{$$}{\r}'; echo; echo; echo; done
+
+dropped:
+	@docker-compose exec cilium hubble observe -f -j --verdict DROPPED --protocol tcp \
+		|	while read -r a; do echo "$$a" | jq . | perl -pe 's{$$}{\r}'; echo; echo; echo; done
