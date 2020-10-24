@@ -51,3 +51,14 @@
     - fromEndpoints:
         - matchLabels:
             app: traefik
+
+- labels:
+    - key: name
+      value: test-health
+  endpointSelector:
+    matchLabels:
+      'reserved:health': ""
+  ingress:
+    - fromEntities:
+      - health
+

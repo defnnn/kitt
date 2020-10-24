@@ -21,6 +21,7 @@ up:
 	docker-compose up -d --remove-orphans
 
 once:
+	sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
 		mount bpffs /sys/fs/bpf -t bpf
 
