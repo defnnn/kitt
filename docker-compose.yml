@@ -57,6 +57,7 @@ services:
       - AUTH_HOST=auth.${KITT_DOMAIN}
       - LOG_LEVEL=debug
     labels:
+      - "zone=kitt"
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-forward-auth.tls=true"
       - "traefik.http.routers.traefik-forward-auth.entrypoints=https"

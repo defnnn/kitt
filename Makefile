@@ -23,5 +23,5 @@ down:
 	docker-compose rm -f -s
 
 recreate:
-	$(MAKE) clean
+	-$(MAKE) clean
 	$(MAKE) up
