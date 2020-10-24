@@ -24,6 +24,10 @@ once:
 	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
 		mount bpffs /sys/fs/bpf -t bpf
 
+policy:
+	docker-compose exec -T cilium cilium policy delete --all
+	cat policy.yml | docker run --rm -i letfn/python-cli yq . | docker-compose exec -T cilium cilium policy import -
+
 status:
 	docker-compose exec cilium cilium status --all-controllers --all-health --all-redirects
 	docker-compose exec cilium hubble status

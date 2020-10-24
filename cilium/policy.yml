@@ -1,0 +1,42 @@
+- labels:
+    - key: name
+      value: host-to-defn-home
+  endpointSelector:
+    matchLabels:
+      id: defn.home
+  ingress:
+    - fromEndpoints:
+        - fromEntities:
+            - host
+      toPorts:
+        - ports:
+            - port: "2222"
+              protocol: TCP
+
+- labels:
+    - key: name
+      value: host-to-dgwyn-home
+  endpointSelector:
+    matchLabels:
+      id: dgwyn.home
+  ingress:
+    - fromEndpoints:
+        - fromEntities:
+            - host
+      toPorts:
+        - ports:
+            - port: "2222"
+              protocol: TCP
+
+- labels:
+    - key: name
+      value: test-home-to-kitt
+  endpointSelector:
+    matchLabels:
+      zone: kitt
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            id: defn.home
+        - matchLabels:
+            id: dgwyn.home
