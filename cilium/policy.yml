@@ -15,6 +15,24 @@
 
 - labels:
     - key: name
+      value: host-to-app-traefik
+  endpointSelector:
+    matchLabels:
+      app: home
+  ingress:
+    - fromEndpoints:
+        - fromEntities:
+            - host
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+        - ports:
+            - port: "443"
+              protocol: TCP
+
+- labels:
+    - key: name
       value: test-app-home-to-zone-kitt
   endpointSelector:
     matchLabels:
