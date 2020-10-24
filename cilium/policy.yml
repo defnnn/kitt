@@ -72,3 +72,23 @@
     - fromEntities:
       - health
 
+- labels:
+    - key: name
+      value: host-to-world
+  endpointSelector:
+    matchLabels:
+      'reserved:world': ""
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            'reserved:host': ""
+
+- labels:
+    - key: name
+      value: egress-any-to-any
+  endpointSelector:
+    matchEndpoints:
+      - {}
+  egress:
+    - toEndpoints:
+      - {}
