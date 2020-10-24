@@ -40,3 +40,14 @@
     - fromEndpoints:
         - matchLabels:
             app: home
+
+- labels:
+    - key: name
+      value: test-app-traefik-to-zone-kitt
+  endpointSelector:
+    matchLabels:
+      zone: kitt
+  ingress:
+    - fromEndpoints:
+        - matchLabels:
+            app: traefik
