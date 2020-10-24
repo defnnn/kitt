@@ -27,6 +27,7 @@ services:
     labels:
       - "app=traefik"
       - "zone=kitt"
+      - "SERVICE_NAME=traefik"
       - "traefik.enable=true"
       - "traefik.http.routers.traefik-api.tls=true"
       - "traefik.http.routers.traefik-api.entrypoints=https"

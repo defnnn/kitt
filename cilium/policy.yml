@@ -1,5 +1,22 @@
 - labels:
     - key: name
+      value: host-to-app-traefik
+  endpointSelector:
+    matchLabels:
+      app: traefik
+  ingress:
+    - fromEndpoints:
+        - fromEntities:
+            - host
+      toPorts:
+        - ports:
+            - port: "80"
+              protocol: TCP
+            - port: "443"
+              protocol: TCP
+
+- labels:
+    - key: name
       value: host-to-app-home
   endpointSelector:
     matchLabels:
@@ -11,24 +28,6 @@
       toPorts:
         - ports:
             - port: "2222"
-              protocol: TCP
-
-- labels:
-    - key: name
-      value: host-to-app-traefik
-  endpointSelector:
-    matchLabels:
-      app: home
-  ingress:
-    - fromEndpoints:
-        - fromEntities:
-            - host
-      toPorts:
-        - ports:
-            - port: "80"
-              protocol: TCP
-        - ports:
-            - port: "443"
               protocol: TCP
 
 - labels:
