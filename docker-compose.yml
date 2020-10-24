@@ -63,6 +63,16 @@ services:
     depends_on:
       - traefik
 
+  registrator:
+    image: gliderlabs/registrator:latest
+    network_mode: host
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    command:
+      - -internal=true
+      - consul://localhost:8500
+
+
 networks:
   default:
     driver: cilium
