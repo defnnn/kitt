@@ -1,5 +1,22 @@
 - labels:
     - key: name
+      value: host-to-app-pihole-dns
+  endpointSelector:
+    matchLabels:
+      app: pihole
+  ingress:
+    - fromEndpoints:
+        - fromEntities:
+            - host
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: TCP
+            - port: "53"
+              protocol: UDP
+
+- labels:
+    - key: name
       value: host-to-app-traefik
   endpointSelector:
     matchLabels:

@@ -40,3 +40,7 @@ observe:
 dropped:
 	@docker-compose exec cilium hubble observe -f -j --verdict DROPPED --protocol tcp \
 		|	while read -r a; do echo "$$a" | jq . | perl -pe 's{$$}{\r}'; echo; echo; echo; done
+
+dropped-udp:
+	@docker-compose exec cilium hubble observe -f -j --verdict DROPPED --protocol udp\
+		|	while read -r a; do echo "$$a" | jq . | perl -pe 's{$$}{\r}'; echo; echo; echo; done
