@@ -5,14 +5,14 @@ services:
     environment:
       - "CONSUL_LOCAL_CONFIG={\"skip_leave_on_interrupt\": true, \"disable_update_check\": true}"
     image: docker.io/library/consul:1.9.0-beta1
-    command: agent -client=127.0.0.1 -bind=127.0.0.1 -server -bootstrap-expect 1 -http-port 8588
+    command: agent -client=169.254.32.1 -bind=169.254.32.1 -server -bootstrap-expect 1
     volumes:
       - ./etc/data/consul:/consul/data
     restart: always
     network_mode: "host"
   cilium:
     image: docker.io/cilium/cilium:v1.9.0-rc2
-    command: cilium-agent --kvstore consul --kvstore-opt consul.address=127.0.0.1:8588 -t vxlan --enable-ipv6=false --enable-hubble=true
+    command: cilium-agent --kvstore consul --kvstore-opt consul.address=169.254.32.1:8500 -t vxlan --enable-ipv6=false --enable-hubble=true
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/run/docker/netns:/var/run/docker/netns
