@@ -33,7 +33,7 @@ policy:
 	cat policy.yml | docker run --rm -i letfn/python-cli yq . | docker-compose exec -T cilium cilium policy import -
 
 status:
-	@docker-compose exec cilium cilium status --all-controllers --all-health --all-redirects; echo
+	@docker-compose exec cilium cilium status --all-health; echo
 	@docker-compose exec cilium hubble status; echo
 	@docker-compose exec cilium cilium node list; echo
 
