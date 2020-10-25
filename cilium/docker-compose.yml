@@ -1,18 +1,9 @@
 version: '3.7'
 
 services:
-  consul:
-    environment:
-      - "CONSUL_LOCAL_CONFIG={\"skip_leave_on_interrupt\": true, \"disable_update_check\": true}"
-    image: docker.io/library/consul:1.9.0-beta1
-    command: agent -client=169.254.32.1 -bind=169.254.32.1 -server -bootstrap-expect 1
-    volumes:
-      - ./etc/data/consul:/consul/data
-    restart: always
-    network_mode: "host"
   cilium:
     image: docker.io/cilium/cilium:v1.9.0-rc2
-    command: cilium-agent --ipv4-range ${KITT_NETWORK} --kvstore consul --kvstore-opt consul.address=169.254.32.1:8500 --enable-ipv6=false --enable-hubble=true --enable-policy=default --ipv4-node=${NODE_IP}
+    command: cilium-agent --ipv4-range ${KITT_NETWORK} --kvstore consul --kvstore-opt consul.address=${CONSUL_IP}:8500 --enable-ipv6=false --enable-hubble=true --enable-policy=default --ipv4-node=${NODE_IP}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/run/docker/netns:/var/run/docker/netns
@@ -25,8 +16,6 @@ services:
       - "SYS_ADMIN"
     privileged: true
     restart: always
-    depends_on:
-      - consul
   plugin:
     image: docker.io/cilium/docker-plugin:v1.9.0-rc2
     command: cilium-docker

@@ -11,6 +11,9 @@ dummy:
 		bash -c "ip link add dummy0 type dummy; ip addr add 169.254.32.1/32 dev dummy0; ip link set dev dummy0 up"
 	sudo ifconfig lo0 alias "169.254.32.1" netmask 255.255.255.255
 
+logs:
+	docker-compose logs -f
+
 recreate:
 	$(MAKE) down up
 
@@ -30,8 +33,9 @@ policy:
 	cat policy.yml | docker run --rm -i letfn/python-cli yq . | docker-compose exec -T cilium cilium policy import -
 
 status:
-	docker-compose exec cilium cilium status --all-controllers --all-health --all-redirects
-	docker-compose exec cilium hubble status
+	@docker-compose exec cilium cilium status --all-controllers --all-health --all-redirects; echo
+	@docker-compose exec cilium hubble status; echo
+	@docker-compose exec cilium cilium node list; echo
 
 observe:
 	@docker-compose exec cilium hubble observe -f -j --verdict FORWARDED \
