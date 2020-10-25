@@ -4,6 +4,7 @@ services:
   traefik:
     image: "traefik:v2.3.2"
     command:
+      - --providers.file.directory=/etc/traefik
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.usebindportip=false
@@ -24,6 +25,8 @@ services:
         ipv4_address: ${KITT_NETWORK_PREFIX}.100
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./etc/traefik/kitt.toml:/etc/traefik/kitt.toml
+      - ./etc/traefik/certs:/etc/traefik/certs
     labels:
       - "app=traefik"
       - "zone=kitt"
@@ -33,10 +36,12 @@ services:
       - "traefik.http.routers.traefik-api.entrypoints=https"
       - "traefik.http.routers.traefik-api.rule=Host(`traefik.${KITT_DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
+      - "traefik.http.services.traefik-api.loadbalancer.server.port=80"
       - "traefik.http.routers.traefik-dash.tls=true"
       - "traefik.http.routers.traefik-dash.entrypoints=https"
       - "traefik.http.routers.traefik-dash.rule=Host(`traefik.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
+      - "traefik.http.services.traefik-dash.loadbalancer.server.port=80"
     ports:
       - 80
       - 443

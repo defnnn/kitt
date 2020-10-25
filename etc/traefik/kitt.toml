@@ -1,0 +1,13 @@
+[global]
+  checkNewVersion = false
+  sendAnonymousUsage = false
+
+[[tls.certificates]]
+  certFile = "/etc/traefik/certs/default.pem"
+  keyFile = "/etc/traefik/certs/default.key"
+
+[tls.stores]
+  [tls.stores.default]
+    [tls.stores.default.defaultCertificate]
+      certFile = "/etc/traefik/certs/default.pem"
+      keyFile = "/etc/traefik/certs/default.key"
