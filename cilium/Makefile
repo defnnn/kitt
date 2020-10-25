@@ -7,9 +7,8 @@ setup:
 	$(MAKE) once up
 
 dummy:
-	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
-		bash -c "ip link add dummy0 type dummy; ip addr add 169.254.32.1/32 dev dummy0; ip link set dev dummy0 up"
-	sudo ifconfig lo0 alias "169.254.32.1" netmask 255.255.255.255
+	docker run --rm -i --privileged --network=host --pid=host alpine \
+		nsenter -t 1 -m -u -n -i -- bash -c "ip link add dummy0 type dummy; ip addr add 169.254.32.1/32 dev dummy0; ip link set dev dummy0 up"
 
 logs:
 	docker-compose logs -f
@@ -24,9 +23,10 @@ up:
 	docker-compose up -d --remove-orphans
 
 once:
-	sudo iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
-	docker run --rm -i --privileged --network=host --pid=host alpine nsenter -t 1 -m -u -n -i -- \
-		mount bpffs /sys/fs/bpf -t bpf
+	docker run --rm -i --privileged --network=host --pid=host alpine \
+		iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE
+	docker run --rm -i --privileged --network=host --pid=host alpine \
+		nsenter -t 1 -m -u -n -i -- mount bpffs /sys/fs/bpf -t bpf
 
 policy:
 	docker-compose exec -T cilium cilium policy delete --all
