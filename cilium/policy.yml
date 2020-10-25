@@ -1,6 +1,6 @@
 - labels:
     - key: name
-      value: host-to-app-pihole-dns
+      value: host-to-app-pihole
   endpointSelector:
     matchLabels:
       app: pihole
@@ -11,9 +11,7 @@
       toPorts:
         - ports:
             - port: "53"
-              protocol: TCP
-            - port: "53"
-              protocol: UDP
+              protocol: ANY
 
 - labels:
     - key: name
@@ -109,3 +107,18 @@
   egress:
     - toEndpoints:
       - {}
+
+- labels:
+    - key: name
+      value: egress-any-to-dns
+  endpointSelector:
+    matchEndpoints:
+      - {}
+  egress:
+    - toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"

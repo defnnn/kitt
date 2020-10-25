@@ -12,7 +12,7 @@ services:
     network_mode: "host"
   cilium:
     image: docker.io/cilium/cilium:v1.9.0-rc2
-    command: cilium-agent --kvstore consul --kvstore-opt consul.address=169.254.32.1:8500 -t vxlan --enable-ipv6=false --enable-hubble=true --enable-policy=always
+    command: cilium-agent --ipv4-range ${KITT_NETWORK} --kvstore consul --kvstore-opt consul.address=169.254.32.1:8500 --enable-ipv6=false --enable-hubble=true --enable-policy=default --ipv4-node=${NODE_IP}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/run/docker/netns:/var/run/docker/netns
@@ -24,9 +24,9 @@ services:
       - "NET_RAW"
       - "SYS_ADMIN"
     privileged: true
+    restart: always
     depends_on:
       - consul
-    restart: always
   plugin:
     image: docker.io/cilium/docker-plugin:v1.9.0-rc2
     command: cilium-docker
