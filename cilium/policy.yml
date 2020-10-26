@@ -1,5 +1,23 @@
 - labels:
     - key: name
+      value: host-to-app-vault
+  endpointSelector:
+    matchLabels:
+      app: vault
+  ingress:
+    - fromEndpoints:
+        - fromEntities:
+            - host
+      toPorts:
+        - ports:
+            - port: "8200"
+              protocol: TCP
+            - port: "8201"
+              protocol: TCP
+
+
+- labels:
+    - key: name
       value: host-to-app-pihole
   endpointSelector:
     matchLabels:
