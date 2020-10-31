@@ -8,7 +8,6 @@ services:
       - --providers.consulcatalog=true
       - --providers.consulcatalog.exposedbydefault=false
       - --providers.consulcatalog.endpoint.address=169.254.32.1:8500
-      - --providers.consulcatalog.endpoint.datacenter=global
       - --providers.consulcatalog.endpoint.scheme=http
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
@@ -18,12 +17,13 @@ services:
       - --entrypoints.http.http.redirections.entryPoint.to=https
       - --entrypoints.http.http.redirections.entrypoint.permanent=false
       - --entrypoints.https.address=:443
+      - --entrypoints.https.http.tls=true
       - --entrypoints.https.proxyprotocol.insecure
       - --entrypoints.https.http.middlewares=traefik-forward-auth@docker
       - --api.dashboard
       - --api
       - --serverstransport.insecureskipverify=true
-      - --log.level=DEBUG
+      - --log.level=INFO
       - --accesslog=true
     networks:
       default:
@@ -37,12 +37,10 @@ services:
       - "zone=kitt"
       - "SERVICE_NAME=traefik"
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-api.tls=true"
       - "traefik.http.routers.traefik-api.entrypoints=https"
       - "traefik.http.routers.traefik-api.rule=Host(`traefik.${KITT_DOMAIN}`) && PathPrefix(`/api`)"
       - "traefik.http.routers.traefik-api.service=api@internal"
       - "traefik.http.services.traefik-api.loadbalancer.server.port=80"
-      - "traefik.http.routers.traefik-dash.tls=true"
       - "traefik.http.routers.traefik-dash.entrypoints=https"
       - "traefik.http.routers.traefik-dash.rule=Host(`traefik.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-dash.service=dashboard@internal"
@@ -69,7 +67,6 @@ services:
     labels:
       - "zone=kitt"
       - "traefik.enable=true"
-      - "traefik.http.routers.traefik-forward-auth.tls=true"
       - "traefik.http.routers.traefik-forward-auth.entrypoints=https"
       - "traefik.http.routers.traefik-forward-auth.rule=Host(`auth.${KITT_DOMAIN}`)"
       - "traefik.http.routers.traefik-forward-auth.middlewares=traefik-forward-auth"
