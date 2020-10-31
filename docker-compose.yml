@@ -5,6 +5,11 @@ services:
     image: "traefik:v2.3.2"
     command:
       - --providers.file.directory=/etc/traefik
+      - --providers.consulcatalog=true
+      - --providers.consulcatalog.exposedbydefault=false
+      - --providers.consulcatalog.endpoint.address=169.254.32.1:8500
+      - --providers.consulcatalog.endpoint.datacenter=global
+      - --providers.consulcatalog.endpoint.scheme=http
       - --providers.docker=true
       - --providers.docker.exposedbydefault=false
       - --providers.docker.usebindportip=false
@@ -14,7 +19,7 @@ services:
       - --entrypoints.http.http.redirections.entrypoint.permanent=false
       - --entrypoints.https.address=:443
       - --entrypoints.https.proxyprotocol.insecure
-      - --entrypoints.https.http.middlewares=traefik-forward-auth
+      - --entrypoints.https.http.middlewares=traefik-forward-auth@docker
       - --api.dashboard
       - --api
       - --serverstransport.insecureskipverify=true
