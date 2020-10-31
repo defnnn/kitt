@@ -18,7 +18,6 @@
       service = "consul"
       entrypoints = ["https"]
       rule = "HostRegexp(`consul.{domain:.+}`)"
-      tls = "true"
 
   [http.services]
     [http.services.consul.loadBalancer]
