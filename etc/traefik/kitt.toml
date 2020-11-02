@@ -18,8 +18,15 @@
       service = "consul"
       entrypoints = ["https"]
       rule = "HostRegexp(`consul.{domain:.+}`)"
+    [http.routers.vault]
+      service = "vault"
+      entrypoints = ["https"]
+      rule = "HostRegexp(`vault.{domain:.+}`)"
 
   [http.services]
     [http.services.consul.loadBalancer]
       [[http.services.consul.loadBalancer.servers]]
         url = "http://169.254.32.1:8500/"
+    [http.services.vault.loadBalancer]
+      [[http.services.vault.loadBalancer.servers]]
+        url = "http://active.vault.service.dc1.consul:8200"
