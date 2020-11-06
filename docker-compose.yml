@@ -1,84 +1,6 @@
 version: '3.7'
 
 services:
-  traefik:
-    image: "traefik:v2.3.2"
-    command:
-      - --providers.file.directory=/etc/traefik
-      - --providers.consulcatalog=true
-      - --providers.consulcatalog.exposedbydefault=false
-      - --providers.consulcatalog.endpoint.address=169.254.32.1:8500
-      - --providers.consulcatalog.endpoint.scheme=http
-      - --providers.consulcatalog.endpoint.datacenter=dc1
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
-      - --providers.docker.usebindportip=false
-      - --entrypoints.http.address=:80
-      - --entrypoints.http.proxyprotocol.insecure
-      - --entrypoints.http.http.redirections.entryPoint.to=https
-      - --entrypoints.http.http.redirections.entrypoint.permanent=false
-      - --entrypoints.https.address=:443
-      - --entrypoints.https.http.tls=true
-      - --entrypoints.https.proxyprotocol.insecure
-      - --entrypoints.https.http.middlewares=traefik-forward-auth@docker
-      - --api.dashboard
-      - --api
-      - --serverstransport.insecureskipverify=true
-      - --log.level=INFO
-      - --accesslog=true
-    networks:
-      default:
-        ipv4_address: ${KITT_NETWORK_PREFIX}.100
-    dns:
-      - 169.254.32.1
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./etc/traefik/kitt.toml:/etc/traefik/kitt.toml
-      - ./etc/traefik/certs:/etc/traefik/certs
-    labels:
-      - "app=traefik"
-      - "zone=kitt"
-      - "SERVICE_NAME=traefik"
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik-api.entrypoints=https"
-      - "traefik.http.routers.traefik-api.rule=Host(`traefik.${KITT_DOMAIN}`) && PathPrefix(`/api`)"
-      - "traefik.http.routers.traefik-api.service=api@internal"
-      - "traefik.http.services.traefik-api.loadbalancer.server.port=80"
-      - "traefik.http.routers.traefik-dash.entrypoints=https"
-      - "traefik.http.routers.traefik-dash.rule=Host(`traefik.${KITT_DOMAIN}`)"
-      - "traefik.http.routers.traefik-dash.service=dashboard@internal"
-      - "traefik.http.services.traefik-dash.loadbalancer.server.port=80"
-    ports:
-      - 80
-      - 443
-
-  traefik-forward-auth:
-    image: thomseddon/traefik-forward-auth:2
-    command: [ "--match-whitelist-or-domain" ]
-    environment:
-      - DEFAULT_ACTION=auth
-      - DEFAULT_PROVIDER=generic-oauth
-      - PROVIDERS_GENERIC_OAUTH_AUTH_URL=https://github.com/login/oauth/authorize
-      - PROVIDERS_GENERIC_OAUTH_TOKEN_URL=https://github.com/login/oauth/access_token
-      - PROVIDERS_GENERIC_OAUTH_USER_URL=https://api.github.com/user
-      - PROVIDERS_GENERIC_OAUTH_CLIENT_ID=${KITT_CLIENT_ID}
-      - PROVIDERS_GENERIC_OAUTH_CLIENT_SECRET=${KITT_CLIENT_SECRET}
-      - SECRET=${KITT_SECRET}
-      - COOKIE_DOMAIN=${KITT_DOMAIN}
-      - AUTH_HOST=auth.${KITT_DOMAIN}
-      - LOG_LEVEL=debug
-    labels:
-      - "zone=kitt"
-      - "traefik.enable=true"
-      - "traefik.http.routers.traefik-forward-auth.entrypoints=https"
-      - "traefik.http.routers.traefik-forward-auth.rule=Host(`auth.${KITT_DOMAIN}`)"
-      - "traefik.http.routers.traefik-forward-auth.middlewares=traefik-forward-auth"
-      - "traefik.http.services.traefik-forward-auth.loadbalancer.server.port=4181"
-      - "traefik.http.middlewares.traefik-forward-auth.forwardauth.address=http://traefik-forward-auth:4181"
-      - "traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders=X-Forwarded-User"
-    depends_on:
-      - traefik
-
   registrator:
     image: gliderlabs/registrator:latest
     network_mode: host
@@ -87,7 +9,6 @@ services:
     command:
       - -internal=true
       - consul://localhost:8500
-
 
 networks:
   default:
