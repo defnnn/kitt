@@ -15,7 +15,7 @@ services:
       - 80
     labels:
       - "SERVICE_NAME=whoami"
-      - "SERVICE_TAGS=traefik.enable=true,traefik.enable=true,traefik.http.routers.kuard.entrypoints=https,traefik.http.routers.kuard.rule=HostRegexp(`whoami.{domain:.+}`)"
+      - "SERVICE_TAGS=traefik.enable=true,traefik.http.routers.whoami.entrypoints=https,traefik.http.routers.whoami.rule=HostRegexp(`whoami.{domain:.+}`)"
       - "app=hello"
       - "zone=kitt"
   kuard:
@@ -24,7 +24,7 @@ services:
       - 8080
     labels:
       - "SERVICE_NAME=kuard"
-      - "SERVICE_TAGS=traefik.enable=true,traefik.enable=true,traefik.http.routers.kuard.entrypoints=https,traefik.http.routers.kuard.rule=HostRegexp(`kuard.{domain:.+}`)"
+      - "SERVICE_TAGS=traefik.enable=true,traefik.http.routers.kuard.entrypoints=https,traefik.http.routers.kuard.rule=HostRegexp(`kuard.{domain:.+}`)"
       - "app=hello"
       - "zone=kitt"
 
