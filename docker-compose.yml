@@ -9,6 +9,27 @@ services:
     command:
       - -internal=true
       - consul://${CONSUL_IP}:8500
+  whoami:
+    image: containous/whoami
+    ports:
+      - 80
+    labels:
+      - "SERVICE_NAME=whoami"
+      - "traefik.enable=true"
+      - "traefik.http.routers.whoami.entrypoints=https"
+      - "traefik.http.routers.whoami.rule=HostRegexp(`whoami.{domain:.+}`)"
+      - "traefik.http.services.whoami.loadbalancer.server.port=80"
+      - "app=hello"
+      - "zone=kitt"
+  kuard:
+    image: gcr.io/kuar-demo/kuard-amd64:blue
+    ports:
+      - 8080
+    labels:
+      - "SERVICE_NAME=kuard"
+      - "SERVICE_TAGS=traefik.enable=true,traefik.enable=true,traefik.http.routers.kuard.entrypoints=https,traefik.http.routers.kuard.rule=HostRegexp(`kuard.{domain:.+}`)"
+      - "app=hello"
+      - "zone=kitt"
 
 networks:
   default:
