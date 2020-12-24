@@ -8,7 +8,7 @@ services:
       - /var/run/docker.sock:/tmp/docker.sock
     command:
       - -internal=true
-      - consul://localhost:8500
+      - consul://${CONSUL_IP}:8500
 
 networks:
   default:
