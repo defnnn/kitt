@@ -15,5 +15,6 @@ services:
       - kitt:/vault-env/kitt
 
 volumes:
-  kitt:
+  consul:
   cilium:
+  kitt:
