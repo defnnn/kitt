@@ -14,9 +14,13 @@ services:
       - cilium:/vault-env/cilium
       - kitt:/vault-env/kitt
       - zerotier:/vault-env/zerotier
+      - traefik:/vault-env/traefik
+      - traefik_auth:/vault-env/traefik-auth
 
 volumes:
   consul:
   cilium:
   kitt:
   zerotier:
+  traefik:
+  traefik_auth:

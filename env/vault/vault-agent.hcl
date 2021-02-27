@@ -41,3 +41,13 @@ template {
   source      = "/vault-template/zerotier.tmpl"
   destination = "/vault-env/zerotier/.env"
 }
+
+template {
+  source      = "/vault-template/traefik.tmpl"
+  destination = "/vault-env/traefik/.env"
+}
+
+template {
+  source      = "/vault-template/traefik-auth.tmpl"
+  destination = "/vault-env/traefik-auth/.env"
+}
