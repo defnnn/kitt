@@ -14,6 +14,7 @@ down:
 
 recreate:
 	$(MAKE) clean
+	$(MAKE) auth
 	$(MAKE) up
 
 logs:
