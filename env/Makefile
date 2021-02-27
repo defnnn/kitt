@@ -19,6 +19,7 @@ recreate:
 logs:
 	docker-compose logs -f
 
-.PHONY: env
-env:
-	docker run --rm -v env_kitt:/secrets alpine cat /secrets/.env > .env
+auth:
+	rm -f vault/token
+	v read -field=role_id auth/approle/role/jenkins/role-id  > vault/role-id
+	v write -wrap-ttl=180s -field=wrapping_token -f auth/approle/role/jenkins/secret-id > vault/secret-id
