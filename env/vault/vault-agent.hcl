@@ -23,11 +23,16 @@ auto_auth {
 }
 
 template {
-  source      = "/vault-template/kitt.tmpl"
-  destination = "/vault-env/kitt/.env"
+  source      = "/vault-template/consul.tmpl"
+  destination = "/vault-env/consul/.env"
 }
 
 template {
   source      = "/vault-template/cilium.tmpl"
   destination = "/vault-env/cilium/.env"
+}
+
+template {
+  source      = "/vault-template/kitt.tmpl"
+  destination = "/vault-env/kitt/.env"
 }
