@@ -13,8 +13,10 @@ services:
       - consul:/vault-env/consul
       - cilium:/vault-env/cilium
       - kitt:/vault-env/kitt
+      - zerotier:/vault-env/zerotier
 
 volumes:
   consul:
   cilium:
   kitt:
+  zerotier:

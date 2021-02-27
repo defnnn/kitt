@@ -36,3 +36,8 @@ template {
   source      = "/vault-template/kitt.tmpl"
   destination = "/vault-env/kitt/.env"
 }
+
+template {
+  source      = "/vault-template/zerotier.tmpl"
+  destination = "/vault-env/zerotier/.env"
+}
