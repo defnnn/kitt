@@ -1,6 +1,6 @@
 pi_file = "/vault/pid"
 
-exit_after_auth = false
+exit_after_auth = true
 
 listener "tcp" {
   address = "0.0.0.0:8200"
