@@ -7,7 +7,7 @@ clean:
 	docker-compose down --remove-orphans
 
 up:
-	docker-compose up -d --remove-orphans
+	docker-compose up --remove-orphans
 
 down:
 	docker-compose rm -f -s
