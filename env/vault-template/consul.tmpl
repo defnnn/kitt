@@ -1,4 +1,4 @@
-{{ with secret "/kv/jenkins/jojo.defn.sh/consul" -}}
+{{ with printf "/kv/jenkins/%s/consul" (env "KITT_DOMAIN") | secret -}}
 {{ range $k, $v := .Data.data -}}
 {{ $k }}={{ $v }}
 {{ end -}}

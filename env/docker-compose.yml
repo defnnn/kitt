@@ -2,14 +2,14 @@ version: '3.7'
 
 services:
   vault-agent:
+    image: defn/vault-agent
     command:
       - -log-level
       - debug
     env_file: .env
-    image: defn/vault-agent
     volumes:
-      - ${KITT_MOUNT}/vault:/vault
-      - ${KITT_MOUNT}/vault-template:/vault-template
+      - ${KITT_MOUNT:-./}/vault:/vault
+      - ${KITT_MOUNT:-./}/vault-template:/vault-template
       - consul:/vault-env/consul
       - cilium:/vault-env/cilium
       - kitt:/vault-env/kitt
