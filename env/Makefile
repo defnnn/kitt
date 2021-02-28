@@ -23,4 +23,4 @@ logs:
 auth:
 	rm -f vault/token
 	v read -field=role_id auth/approle/role/jenkins/role-id  > vault/role-id
-	v write -wrap-ttl=180s -field=wrapping_token -f auth/approle/role/jenkins/secret-id > vault/secret-id
+	v write -wrap-ttl=60s -field=wrapping_token -f auth/approle/role/jenkins/secret-id > vault/secret-id
