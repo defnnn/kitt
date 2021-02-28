@@ -1,0 +1,5 @@
+{{ with secret "/kv/jenkins/jojo.defn.sh/consul" -}}
+{{ range $k, $v := .Data.data -}}
+{{ $k }}={{ $v }}
+{{ end -}}
+{{ end -}}

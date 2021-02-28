@@ -1,0 +1,5 @@
+{{ with secret "/kv/jenkins/jojo.defn.sh/traefik" -}}
+{{ range $k, $v := .Data.data -}}
+{{ $k }}={{ $v }}
+{{ end -}}
+{{ end -}}

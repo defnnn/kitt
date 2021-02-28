@@ -2,13 +2,11 @@ version: '3.7'
 
 services:
   registrator:
-    image: gliderlabs/registrator:latest
+    image: defn/registrator
     network_mode: host
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock
-    command:
-      - -internal=true
-      - consul://${CONSUL_IP}:8500
+      - env_kitt:/screts
   whoami:
     image: containous/whoami
     ports:
@@ -27,6 +25,10 @@ services:
       - "SERVICE_TAGS=traefik.enable=true,traefik.http.routers.kuard.entrypoints=https,traefik.http.routers.kuard.rule=HostRegexp(`kuard.{domain:.+}`)"
       - "app=hello"
       - "zone=kitt"
+
+volumes:
+  env_kitt:
+    external: true
 
 networks:
   default:

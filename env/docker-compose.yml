@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  vault-agent:
+    command:
+      - -log-level
+      - debug
+    env_file: .env
+    image: defn/vault-agent
+    volumes:
+      - ${KITT_MOUNT}/vault:/vault
+      - ${KITT_MOUNT}/vault-template:/vault-template
+      - consul:/vault-env/consul
+      - cilium:/vault-env/cilium
+      - kitt:/vault-env/kitt
+      - zerotier:/vault-env/zerotier
+      - traefik:/vault-env/traefik
+      - traefik_auth:/vault-env/traefik-auth
+
+volumes:
+  consul:
+  cilium:
+  kitt:
+  zerotier:
+  traefik:
+  traefik_auth:
