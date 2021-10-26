@@ -18,7 +18,3 @@ recreate:
 
 logs:
 	docker-compose logs -f
-
-.PHONY: env
-env:
-	docker run --rm -v env_kitt:/secrets alpine cat /secrets/.env > .env

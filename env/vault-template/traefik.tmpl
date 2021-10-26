@@ -1,5 +1,0 @@
-{{ with printf "/kv/jenkins/%s/traefik" (env "KITT_DOMAIN") | secret -}}
-{{ range $k, $v := .Data.data -}}
-{{ $k }}={{ $v }}
-{{ end -}}
-{{ end -}}

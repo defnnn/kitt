@@ -6,34 +6,10 @@ services:
     network_mode: host
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock
-      - env_kitt:/screts
-  whoami:
-    image: containous/whoami
-    ports:
-      - 80
-    labels:
-      - "SERVICE_NAME=whoami"
-      - "SERVICE_TAGS=traefik.enable=true,traefik.http.routers.whoami.entrypoints=https,traefik.http.routers.whoami.rule=HostRegexp(`whoami.{domain:.+}`)"
-      - "app=hello"
-      - "zone=kitt"
-  kuard:
-    image: gcr.io/kuar-demo/kuard-amd64:blue
-    ports:
-      - 8080
-    labels:
-      - "SERVICE_NAME=kuard"
-      - "SERVICE_TAGS=traefik.enable=true,traefik.http.routers.kuard.entrypoints=https,traefik.http.routers.kuard.rule=HostRegexp(`kuard.{domain:.+}`)"
-      - "app=hello"
-      - "zone=kitt"
-
-volumes:
-  env_kitt:
-    external: true
 
 networks:
   default:
-    driver: cilium
     ipam:
       config:
-        - subnet: ${KITT_NETWORK}
+        - subnet: 192.168.88.0/24
 
